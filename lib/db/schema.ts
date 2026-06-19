@@ -1,14 +1,6 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  integer,
-  serial,
-  numeric,
-} from "drizzle-orm/pg-core"
+import { pgTable, text, timestamp, boolean, serial, integer } from "drizzle-orm/pg-core"
 
-// --- Better Auth required tables -------------------------------------------
+// ---------- Better Auth tables ----------
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -59,54 +51,65 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updatedAt").defaultNow(),
 })
 
-// --- App tables ------------------------------------------------------------
-export const categories = pgTable("categories", {
-  id: serial("id").primaryKey(),
-  slug: text("slug").notNull().unique(),
-  name: text("name").notNull(),
-  sortOrder: integer("sortOrder").notNull().default(0),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-})
-
+// ---------- App tables ----------
+// Prices are stored as integer centavos to avoid float rounding issues.
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
-  description: text("description").notNull().default(""),
-  price: numeric("price", { precision: 10, scale: 2 }).notNull().default("0"),
+  slug: text("slug").notNull(),
+  description: text("description").default(""),
+  category: text("category").notNull().default("descartaveis"),
+  brand: text("brand").default(""),
+  price: integer("price").notNull().default(0),
+  compareAtPrice: integer("compareAtPrice"),
+  image: text("image").default(""),
+  images: text("images").default(""),
+  puffs: text("puffs").default(""),
+  nicotine: text("nicotine").default(""),
+  flavors: text("flavors").default(""),
   stock: integer("stock").notNull().default(0),
-  categorySlug: text("categorySlug").notNull(),
-  imageUrl: text("imageUrl").notNull().default(""),
-  flavors: text("flavors").notNull().default(""),
-  isNew: boolean("isNew").notNull().default(false),
   featured: boolean("featured").notNull().default(false),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
-})
-
-export const customers = pgTable("customers", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  phone: text("phone").notNull(),
-  city: text("city").notNull().default(""),
-  address: text("address").notNull().default(""),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 })
 
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
+  orderNumber: text("orderNumber").notNull(),
   customerName: text("customerName").notNull(),
   customerPhone: text("customerPhone").notNull(),
-  city: text("city").notNull().default(""),
-  address: text("address").notNull().default(""),
-  notes: text("notes").notNull().default(""),
-  total: numeric("total", { precision: 10, scale: 2 }).notNull().default("0"),
-  status: text("status").notNull().default("Recebido"),
-  items: text("items").notNull().default("[]"),
+  customerEmail: text("customerEmail").default(""),
+  address: text("address").default(""),
+  city: text("city").default(""),
+  notes: text("notes").default(""),
+  deliveryMethod: text("deliveryMethod").notNull().default("entrega"),
+  paymentMethod: text("paymentMethod").notNull().default("pix"),
+  subtotal: integer("subtotal").notNull().default(0),
+  deliveryFee: integer("deliveryFee").notNull().default(0),
+  total: integer("total").notNull().default(0),
+  status: text("status").notNull().default("pendente"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+})
+
+export const orderItems = pgTable("order_items", {
+  id: serial("id").primaryKey(),
+  orderId: integer("orderId").notNull(),
+  productId: integer("productId"),
+  productName: text("productName").notNull(),
+  flavor: text("flavor").default(""),
+  unitPrice: integer("unitPrice").notNull().default(0),
+  quantity: integer("quantity").notNull().default(1),
+  lineTotal: integer("lineTotal").notNull().default(0),
 })
 
 export const settings = pgTable("settings", {
   key: text("key").primaryKey(),
   value: text("value").notNull().default(""),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 })
+
+export type Product = typeof products.$inferSelect
+export type Order = typeof orders.$inferSelect
+export type OrderItem = typeof orderItems.$inferSelect
