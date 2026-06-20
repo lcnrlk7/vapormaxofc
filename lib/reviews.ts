@@ -67,8 +67,8 @@ function mulberry32(seed: number) {
 export function getProductRating(productId: number): ProductRating {
   const rand = mulberry32(productId * 2654435761)
 
-  // Quantidade variada por produto (de 6 a ~240).
-  const count = Math.floor(6 + rand() * 234)
+  // Quantidade variada por produto (de 4 a 23), para não ficar exagerado.
+  const count = 4 + Math.floor(rand() * 20)
 
   // Média alta e realista, entre 4.2 e 5.0.
   const average = Math.round((4.2 + rand() * 0.8) * 10) / 10
