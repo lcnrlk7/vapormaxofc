@@ -9,6 +9,9 @@ import { formatBRL } from "@/lib/format"
 import { CATEGORIES } from "@/lib/constants"
 import { Badge } from "@/components/ui/badge"
 import { ChevronRight, Zap, Droplets, Tag } from "lucide-react"
+import { StarRating } from "@/components/product/star-rating"
+import { ProductReviews } from "@/components/product/product-reviews"
+import { getProductRating } from "@/lib/reviews"
 
 export const dynamic = "force-dynamic"
 
@@ -37,6 +40,7 @@ export default async function ProductPage({
 
   const related = await getRelatedProducts(product.category, product.id)
   const categoryName = CATEGORIES.find((c) => c.slug === product.category)?.name ?? product.category
+  const rating = getProductRating(product.id)
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
@@ -73,6 +77,14 @@ export default async function ProductPage({
           </span>
           <h1 className="mt-1 font-heading text-2xl font-bold md:text-3xl text-balance">{product.name}</h1>
 
+          <a href="#avaliacoes" className="mt-2 flex w-fit items-center gap-2 hover:opacity-80">
+            <StarRating value={rating.average} size={16} />
+            <span className="text-sm font-medium text-foreground">
+              {rating.average.toFixed(1).replace(".", ",")}
+            </span>
+            <span className="text-sm text-muted-foreground">({rating.count} avaliações)</span>
+          </a>
+
           <div className="mt-4 flex flex-wrap gap-2">
             {product.puffs && (
               <Badge variant="outline" className="gap-1 border-primary/40 text-foreground">
@@ -101,6 +113,10 @@ export default async function ProductPage({
             <AddToCart product={product} />
           </div>
         </div>
+      </div>
+
+      <div id="avaliacoes" className="scroll-mt-24">
+        <ProductReviews productId={product.id} />
       </div>
 
       {related.length > 0 && (

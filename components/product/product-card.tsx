@@ -10,6 +10,8 @@ import { formatBRL, flavorsToArray } from "@/lib/format"
 import { CATEGORIES } from "@/lib/constants"
 import { Plus, Zap } from "lucide-react"
 import { toast } from "sonner"
+import { StarRating } from "@/components/product/star-rating"
+import { getProductRating } from "@/lib/reviews"
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
@@ -17,6 +19,7 @@ export function ProductCard({ product }: { product: Product }) {
   const flavors = flavorsToArray(product.flavors)
   const categoryName = CATEGORIES.find((c) => c.slug === product.category)?.name ?? product.category
   const outOfStock = product.stock <= 0 || product.soldOut
+  const rating = getProductRating(product.id)
 
   function handleAdd() {
     if (outOfStock) return
@@ -68,6 +71,12 @@ export function ProductCard({ product }: { product: Product }) {
         <Link href={`/produto/${product.slug}`} className="mt-0.5 line-clamp-2 text-sm font-medium leading-tight hover:text-primary">
           {product.name}
         </Link>
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <StarRating value={rating.average} size={13} />
+          <span className="text-[11px] text-muted-foreground">
+            {rating.average.toFixed(1).replace(".", ",")} ({rating.count})
+          </span>
+        </div>
         <div className="mt-auto flex items-end justify-between pt-3">
           <span className="font-heading text-lg font-bold text-primary text-glow-pink">
             {formatBRL(product.price)}

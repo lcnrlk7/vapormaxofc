@@ -6,7 +6,7 @@ import { formatBRL } from "@/lib/format"
 import { waLink } from "@/lib/whatsapp"
 import { PayButton } from "@/components/checkout/pay-button"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, MapPin, MessageCircle, ShoppingBag } from "lucide-react"
+import { CheckCircle2, MapPin, MessageCircle, ShoppingBag, ShieldCheck, Lock } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
@@ -127,6 +127,25 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
             </Button>
           </div>
         )}
+
+        {/* Selo de segurança */}
+        <div className="mt-2 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4">
+          <div className="flex items-center justify-center gap-2 text-emerald-400">
+            <ShieldCheck className="h-5 w-5" />
+            <span className="text-sm font-semibold">Site seguro · Pagamento protegido</span>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Lock className="h-3 w-3" /> Conexão criptografada
+            </span>
+            <span className="flex items-center gap-1">
+              <CheckCircle2 className="h-3 w-3" /> Pagamento via PIX
+            </span>
+            <span className="flex items-center gap-1">
+              <ShieldCheck className="h-3 w-3" /> Dados protegidos
+            </span>
+          </div>
+        </div>
 
         <p className="pt-2 text-center text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground">
