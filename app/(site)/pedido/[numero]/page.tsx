@@ -28,20 +28,20 @@ export default async function OrderConfirmationPage({
         </p>
       </div>
       <div className="flex w-full flex-col gap-3 sm:flex-row">
-        <Button asChild className="flex-1 bg-emerald-500 text-white hover:bg-emerald-600">
-          <a
-            href={waLink(settings.whatsapp_number, `Olá! Acabei de fazer o pedido ${numero} no site.`)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center whitespace-nowrap"
-          >
-            <MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Abrir WhatsApp
-          </a>
+        <Button
+          render={
+            <a
+              href={waLink(settings.whatsapp_number, `Olá! Acabei de fazer o pedido ${numero} no site.`)}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          }
+          className="flex-1 bg-emerald-500 text-white hover:bg-emerald-600"
+        >
+          <MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Abrir WhatsApp
         </Button>
-        <Button asChild variant="outline" className="flex-1 border-border bg-transparent">
-          <Link href="/" className="inline-flex items-center justify-center whitespace-nowrap">
-            <Home className="mr-2 h-5 w-5 shrink-0" /> Voltar ao início
-          </Link>
+        <Button render={<Link href="/" />} variant="outline" className="flex-1 border-border bg-transparent">
+          <Home className="mr-2 h-5 w-5 shrink-0" /> Voltar ao início
         </Button>
       </div>
     </div>

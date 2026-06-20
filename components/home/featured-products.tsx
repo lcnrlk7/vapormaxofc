@@ -13,10 +13,12 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
           <h2 className="font-heading text-2xl font-bold md:text-3xl">Mais procurados</h2>
           <p className="mt-2 text-muted-foreground">Os queridinhos da galera</p>
         </div>
-        <Button asChild variant="ghost" className="shrink-0 text-primary hover:text-primary">
-          <Link href="/catalogo">
-            Ver tudo <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
+        <Button
+          render={<Link href="/catalogo" />}
+          variant="ghost"
+          className="shrink-0 text-primary hover:text-primary"
+        >
+          Ver tudo <ArrowRight className="ml-1 h-4 w-4" />
         </Button>
       </div>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 lg:grid-cols-4">

@@ -101,10 +101,8 @@ export function AdminSidebar() {
       {/* Mobile */}
       <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/80 px-4 py-3 backdrop-blur md:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Abrir menu">
-              <Menu className="h-5 w-5" />
-            </Button>
+          <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="Abrir menu" />}>
+            <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent side="left" className="w-64 border-border bg-card p-0">
             <SheetTitle className="sr-only">Menu administrativo</SheetTitle>

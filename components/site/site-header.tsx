@@ -37,10 +37,12 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
         {/* Mobile menu */}
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menu">
-              <Menu className="h-5 w-5" />
-            </Button>
+          <SheetTrigger
+            render={
+              <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menu" />
+            }
+          >
+            <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent side="left" className="w-72 border-border bg-card">
             <SheetTitle className="sr-only">Menu</SheetTitle>
@@ -96,10 +98,20 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
         </form>
 
         <div className="ml-auto flex items-center gap-1 lg:ml-2">
-          <Button asChild variant="ghost" size="icon" className="text-emerald-400" aria-label="WhatsApp">
-            <a href={waLink(whatsappNumber, "Ola! Vim pelo site da Vapor Max.")} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-5 w-5" />
-            </a>
+          <Button
+            render={
+              <a
+                href={waLink(whatsappNumber, "Ola! Vim pelo site da Vapor Max.")}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+            variant="ghost"
+            size="icon"
+            className="text-emerald-400"
+            aria-label="WhatsApp"
+          >
+            <MessageCircle className="h-5 w-5" />
           </Button>
           <Button
             variant="ghost"

@@ -26,8 +26,8 @@ export function CartSheet() {
           <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
             <ShoppingBag className="h-12 w-12 text-muted-foreground/40" />
             <p className="text-muted-foreground">Seu carrinho esta vazio.</p>
-            <Button asChild variant="secondary" onClick={() => setOpen(false)}>
-              <Link href="/catalogo">Ver catalogo</Link>
+            <Button render={<Link href="/catalogo" />} variant="secondary" onClick={() => setOpen(false)}>
+              Ver catalogo
             </Button>
           </div>
         ) : (
@@ -83,11 +83,11 @@ export function CartSheet() {
                 <span className="font-heading text-lg font-bold">{formatBRL(subtotal)}</span>
               </div>
               <Button
-                asChild
+                render={<Link href="/checkout" />}
                 className="w-full bg-primary text-primary-foreground glow-pink hover:bg-primary/90"
                 onClick={() => setOpen(false)}
               >
-                <Link href="/checkout">Finalizar pedido</Link>
+                Finalizar pedido
               </Button>
             </SheetFooter>
           </>

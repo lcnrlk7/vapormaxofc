@@ -118,9 +118,7 @@ export function CheckoutForm({
       <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-border py-20 text-center">
         <ShoppingBag className="h-12 w-12 text-muted-foreground/40" />
         <p className="text-muted-foreground">Seu carrinho está vazio.</p>
-        <Button asChild>
-          <Link href="/catalogo">Ver catálogo</Link>
-        </Button>
+        <Button render={<Link href="/catalogo" />}>Ver catálogo</Button>
       </div>
     )
   }
