@@ -88,7 +88,7 @@ export function getProductRating(productId: number): ProductRating {
     return {
       text: base.text,
       stars: base.stars,
-      daysAgo: 1 + Math.floor(rand() * 90),
+      daysAgo: 1 + Math.floor(rand() * 7),
     }
   })
 
