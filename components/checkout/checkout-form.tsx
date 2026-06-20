@@ -162,8 +162,14 @@ export function CheckoutForm({
           <h2 className="font-heading text-lg font-semibold">Seus dados</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="name">Nome completo *</Label>
-              <Input id="name" value={form.customerName} onChange={(e) => set("customerName", e.target.value)} required />
+              <Label htmlFor="name">Primeiro nome *</Label>
+              <Input
+                id="name"
+                placeholder="Ex.: João"
+                value={form.customerName}
+                onChange={(e) => set("customerName", e.target.value)}
+                required
+              />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="phone">WhatsApp / Telefone *</Label>
