@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { waLink } from "@/lib/whatsapp"
 import { REGIONS } from "@/lib/constants"
-import { MapPin, MessageCircle } from "lucide-react"
+import { MapPin, MessageCircle, Users } from "lucide-react"
 
-export function RegionsCta({ whatsappNumber }: { whatsappNumber: string }) {
+export function RegionsCta({ whatsappNumber, groupUrl }: { whatsappNumber: string; groupUrl?: string }) {
   return (
     <section className="relative overflow-hidden border-y border-border bg-card/40">
       <div
@@ -32,15 +32,25 @@ export function RegionsCta({ whatsappNumber }: { whatsappNumber: string }) {
             </span>
           ))}
         </div>
-        <Button asChild size="lg" className="bg-emerald-500 text-white hover:bg-emerald-600">
-          <a
-            href={waLink(whatsappNumber, "Olá! Gostaria de saber se entregam na minha região.")}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MessageCircle className="mr-2 h-5 w-5" /> Consultar entrega
-          </a>
-        </Button>
+        <div className="flex flex-col items-center gap-3 sm:flex-row">
+          <Button asChild size="lg" className="bg-emerald-500 text-white hover:bg-emerald-600">
+            <a
+              href={waLink(whatsappNumber, "Olá! Gostaria de saber se entregam na minha região.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center whitespace-nowrap"
+            >
+              <MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Consultar entrega
+            </a>
+          </Button>
+          {groupUrl ? (
+            <Button asChild size="lg" variant="outline" className="border-emerald-500/50 bg-transparent text-emerald-400 hover:bg-emerald-500/10">
+              <a href={groupUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap">
+                <Users className="mr-2 h-5 w-5 shrink-0" /> Entrar no grupo
+              </a>
+            </Button>
+          ) : null}
+        </div>
       </div>
     </section>
   )

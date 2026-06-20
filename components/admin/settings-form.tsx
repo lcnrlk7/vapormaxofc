@@ -13,6 +13,7 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
   const [form, setForm] = useState({
     store_name: settings.store_name ?? "",
     whatsapp_number: settings.whatsapp_number ?? "",
+    whatsapp_group_url: settings.whatsapp_group_url ?? "",
     instagram_url: settings.instagram_url ?? "",
     hours: settings.hours ?? "",
     delivery_fee: centsToReaisInput(Number(settings.delivery_fee) || 0),
@@ -30,6 +31,7 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
     const res = await saveSettings({
       store_name: form.store_name,
       whatsapp_number: form.whatsapp_number.replace(/\D/g, ""),
+      whatsapp_group_url: form.whatsapp_group_url.trim(),
       instagram_url: form.instagram_url,
       hours: form.hours,
       delivery_fee: String(parseBRLToCents(form.delivery_fee)),
@@ -70,6 +72,18 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
           />
           <p className="text-xs text-muted-foreground">
             Exemplo: 55 (Brasil) + 98 (DDD) + número. Os pedidos e o atendimento são enviados para este número.
+          </p>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="group">Link do grupo no WhatsApp</Label>
+          <Input
+            id="group"
+            placeholder="https://chat.whatsapp.com/..."
+            value={form.whatsapp_group_url}
+            onChange={(e) => set("whatsapp_group_url", e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Aparece como botão &quot;Entrar no grupo&quot; na página inicial e no rodapé.
           </p>
         </div>
       </section>

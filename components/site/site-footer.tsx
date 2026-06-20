@@ -2,16 +2,18 @@ import Link from "next/link"
 import Image from "next/image"
 import { waLink } from "@/lib/whatsapp"
 import { REGIONS } from "@/lib/constants"
-import { MessageCircle, Camera, Clock, MapPin } from "lucide-react"
+import { MessageCircle, Camera, Clock, MapPin, Users } from "lucide-react"
 
 export function SiteFooter({
   whatsappNumber,
   instagramUrl,
   hours,
+  groupUrl,
 }: {
   whatsappNumber: string
   instagramUrl: string
   hours: string
+  groupUrl?: string
 }) {
   return (
     <footer className="mt-20 border-t border-border bg-card/50">
@@ -51,6 +53,18 @@ export function SiteFooter({
                 <Camera className="h-4 w-4" /> Instagram
               </a>
             </li>
+            {groupUrl ? (
+              <li>
+                <a
+                  href={groupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-emerald-400"
+                >
+                  <Users className="h-4 w-4" /> Grupo no WhatsApp
+                </a>
+              </li>
+            ) : null}
             <li className="flex items-start gap-2">
               <Clock className="mt-0.5 h-4 w-4 shrink-0" /> {hours}
             </li>

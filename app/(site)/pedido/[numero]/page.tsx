@@ -33,13 +33,14 @@ export default async function OrderConfirmationPage({
             href={waLink(settings.whatsapp_number, `Olá! Acabei de fazer o pedido ${numero} no site.`)}
             target="_blank"
             rel="noopener noreferrer"
+            className="inline-flex items-center justify-center whitespace-nowrap"
           >
-            <MessageCircle className="mr-2 h-5 w-5" /> Abrir WhatsApp
+            <MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Abrir WhatsApp
           </a>
         </Button>
         <Button asChild variant="outline" className="flex-1 border-border bg-transparent">
-          <Link href="/">
-            <Home className="mr-2 h-5 w-5" /> Voltar ao início
+          <Link href="/" className="inline-flex items-center justify-center whitespace-nowrap">
+            <Home className="mr-2 h-5 w-5 shrink-0" /> Voltar ao início
           </Link>
         </Button>
       </div>

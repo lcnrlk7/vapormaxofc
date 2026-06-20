@@ -21,7 +21,7 @@ export default async function HomePage() {
       <Features />
       <CategoryGrid counts={counts} />
       <FeaturedProducts products={featured.slice(0, 8)} />
-      <RegionsCta whatsappNumber={whatsapp} />
+      <RegionsCta whatsappNumber={whatsapp} groupUrl={settings.whatsapp_group_url} />
     </>
   )
 }

@@ -16,6 +16,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         whatsappNumber={settings.whatsapp_number}
         instagramUrl={settings.instagram_url}
         hours={settings.hours}
+        groupUrl={settings.whatsapp_group_url}
       />
       <WhatsappFab number={settings.whatsapp_number} />
     </div>
