@@ -88,28 +88,12 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
         </div>
       </section>
 
-      <section className="space-y-4 rounded-xl border border-border bg-card p-5">
+      <section className="space-y-2 rounded-xl border border-border bg-card p-5">
         <h2 className="font-heading font-semibold">Entrega</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="delivery_fee">Taxa de entrega (R$)</Label>
-            <Input
-              id="delivery_fee"
-              inputMode="decimal"
-              value={form.delivery_fee}
-              onChange={(e) => set("delivery_fee", e.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="free_min">Frete grátis a partir de (R$)</Label>
-            <Input
-              id="free_min"
-              inputMode="decimal"
-              value={form.free_delivery_min}
-              onChange={(e) => set("free_delivery_min", e.target.value)}
-            />
-          </div>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          O frete é <strong className="text-foreground">a combinar pelo WhatsApp</strong>, de acordo com a localização
+          do cliente. Nenhuma taxa fixa é cobrada no checkout — o valor é acertado diretamente na conversa.
+        </p>
       </section>
 
       <Button type="submit" disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90">

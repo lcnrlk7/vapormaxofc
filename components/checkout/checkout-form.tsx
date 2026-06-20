@@ -17,12 +17,8 @@ import Link from "next/link"
 
 export function CheckoutForm({
   whatsappNumber,
-  deliveryFee,
-  freeDeliveryMin,
 }: {
   whatsappNumber: string
-  deliveryFee: number
-  freeDeliveryMin: number
 }) {
   const { items, subtotal, clear } = useCart()
   const router = useRouter()
@@ -38,9 +34,8 @@ export function CheckoutForm({
   const [delivery, setDelivery] = useState<"entrega" | "retirada">("entrega")
   const payment = "Pix"
 
-  const appliedDeliveryFee =
-    delivery === "retirada" ? 0 : subtotal >= freeDeliveryMin && freeDeliveryMin > 0 ? 0 : deliveryFee
-  const total = subtotal + appliedDeliveryFee
+  // Frete é a combinar pelo WhatsApp, conforme a localização do cliente.
+  const total = subtotal
 
   function set(key: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [key]: value }))
@@ -65,7 +60,7 @@ export function CheckoutForm({
       notes: form.notes,
       deliveryMethod: delivery,
       paymentMethod: payment,
-      deliveryFee,
+      deliveryFee: 0,
       items: items.map((i) => ({
         productId: i.productId,
         productName: i.name,
@@ -101,8 +96,8 @@ export function CheckoutForm({
       ),
       ``,
       `Subtotal: ${formatBRL(subtotal)}`,
-      `Entrega: ${appliedDeliveryFee === 0 ? "Grátis" : formatBRL(appliedDeliveryFee)}`,
-      `*Total: ${formatBRL(total)}*`,
+      delivery === "entrega" ? `Frete: a combinar (conforme localização)` : `Retirada no local`,
+      `*Total dos produtos: ${formatBRL(total)}*`,
     ]
       .filter(Boolean)
       .join("\n")
@@ -240,13 +235,18 @@ export function CheckoutForm({
             <span>{formatBRL(subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Entrega</span>
-            <span>{appliedDeliveryFee === 0 ? "Grátis" : formatBRL(appliedDeliveryFee)}</span>
+            <span className="text-muted-foreground">Frete</span>
+            <span className="text-right">{delivery === "retirada" ? "Retirada no local" : "A combinar"}</span>
           </div>
           <div className="flex justify-between border-t border-border pt-2 font-heading text-lg font-bold">
             <span>Total</span>
             <span className="text-primary text-glow-pink">{formatBRL(total)}</span>
           </div>
+          {delivery === "entrega" && (
+            <p className="text-xs text-muted-foreground">
+              O valor do frete é combinado pelo WhatsApp de acordo com a sua localização.
+            </p>
+          )}
         </div>
         <Button
           type="submit"

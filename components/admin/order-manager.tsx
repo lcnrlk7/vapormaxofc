@@ -194,8 +194,14 @@ export function OrderManager({ orders }: { orders: OrderWithItems[] }) {
                     <span>{formatBRL(selected.subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Entrega</span>
-                    <span>{selected.deliveryFee === 0 ? "Grátis" : formatBRL(selected.deliveryFee)}</span>
+                    <span>Frete</span>
+                    <span>
+                      {selected.deliveryMethod === "retirada"
+                        ? "Retirada no local"
+                        : selected.deliveryFee === 0
+                          ? "A combinar"
+                          : formatBRL(selected.deliveryFee)}
+                    </span>
                   </div>
                   <div className="flex justify-between font-heading text-base font-bold">
                     <span>Total</span>
