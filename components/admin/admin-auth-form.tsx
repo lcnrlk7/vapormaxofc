@@ -41,7 +41,7 @@ export function AdminAuthForm({ allowSignup }: { allowSignup: boolean }) {
     <main className="flex min-h-svh items-center justify-center bg-background px-4 neon-grid">
       <Card className="w-full max-w-sm border-border bg-card p-6">
         <div className="mb-6 flex flex-col items-center text-center">
-          <Image src="/logo-square.png" alt="Vapor Max" width={72} height={72} className="h-16 w-16" />
+          <Image src="/logo-vapormax.png" alt="Vapor Max" width={72} height={72} className="h-16 w-16 drop-shadow-[0_0_16px_rgba(255,45,149,0.45)]" />
           <h1 className="mt-4 font-heading text-xl font-bold">Painel Vapor Max</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {isSignUp ? "Crie a conta de administrador" : "Acesse o painel administrativo"}

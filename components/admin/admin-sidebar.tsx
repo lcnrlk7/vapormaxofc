@@ -40,7 +40,7 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col">
       <Link href="/admin" className="flex items-center gap-2 border-b border-border px-5 py-4" onClick={onNavigate}>
-        <Image src="/logo-square.png" alt="Vapor Max" width={36} height={36} className="h-9 w-9" />
+        <Image src="/logo-vapormax.png" alt="Vapor Max" width={36} height={36} className="h-9 w-9" />
         <span className="font-heading text-sm font-bold">Painel Admin</span>
       </Link>
 

@@ -17,7 +17,12 @@ export function SiteFooter({
     <footer className="mt-20 border-t border-border bg-card/50">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-4">
         <div className="md:col-span-1">
-          <Image src="/logo-horizontal.png" alt="Vapor Max" width={150} height={60} className="h-10 w-auto" />
+          <div className="flex items-center gap-2">
+            <Image src="/logo-vapormax.png" alt="Vapor Max" width={44} height={44} className="h-11 w-auto drop-shadow-[0_0_12px_rgba(255,45,149,0.4)]" />
+            <span className="font-heading text-xl font-extrabold tracking-wide">
+              VAPOR<span className="text-neon-pink">MAX</span>
+            </span>
+          </div>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             Catalogo premium de pods, vapes e essencias com atendimento e entrega rapida em toda a regiao.
           </p>
