@@ -15,8 +15,6 @@ import { Truck, Store, ShoppingBag, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 
-const PAYMENTS = ["Pix", "Dinheiro", "Cartão de débito", "Cartão de crédito"]
-
 export function CheckoutForm({
   whatsappNumber,
   deliveryFee,
@@ -38,7 +36,7 @@ export function CheckoutForm({
     notes: "",
   })
   const [delivery, setDelivery] = useState<"entrega" | "retirada">("entrega")
-  const [payment, setPayment] = useState("Pix")
+  const payment = "Pix"
 
   const appliedDeliveryFee =
     delivery === "retirada" ? 0 : subtotal >= freeDeliveryMin && freeDeliveryMin > 0 ? 0 : deliveryFee
@@ -208,21 +206,13 @@ export function CheckoutForm({
         {/* Payment */}
         <div>
           <h2 className="mb-3 font-heading text-lg font-semibold">Forma de pagamento</h2>
-          <div className="flex flex-wrap gap-2">
-            {PAYMENTS.map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => setPayment(p)}
-                className={cn(
-                  "rounded-full border px-4 py-2 text-sm transition-colors",
-                  payment === p ? "border-primary bg-primary/15 text-primary" : "border-border bg-secondary text-foreground/80",
-                )}
-              >
-                {p}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 rounded-full border border-primary bg-primary/15 px-4 py-2 text-sm text-primary">
+            <span className="inline-block h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+            Pix
           </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            A chave Pix é enviada pelo WhatsApp após a confirmação do pedido.
+          </p>
         </div>
       </div>
 
