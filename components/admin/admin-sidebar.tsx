@@ -18,6 +18,7 @@ import {
   ExternalLink,
   Menu,
   CreditCard,
+  Wallet,
 } from "lucide-react"
 
 const LINKS = [
@@ -25,6 +26,7 @@ const LINKS = [
   { href: "/admin/produtos", label: "Produtos", icon: Package },
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
   { href: "/admin/links", label: "Links de pagamento", icon: CreditCard },
+  { href: "/admin/gateways", label: "Gateways", icon: Wallet },
   { href: "/admin/clientes", label: "Clientes", icon: Users },
   { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ]
