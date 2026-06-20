@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { SiteHeader } from "@/components/site/site-header"
 import { SiteFooter } from "@/components/site/site-footer"
 import { WhatsappFab } from "@/components/site/whatsapp-fab"
+import { AgeGate } from "@/components/site/age-gate"
 import { getSettings } from "@/lib/data"
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +20,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         groupUrl={settings.whatsapp_group_url}
       />
       <WhatsappFab number={settings.whatsapp_number} />
+      <AgeGate />
     </div>
   )
 }
