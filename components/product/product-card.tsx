@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { Product } from "@/lib/db/schema"
 import { useCart } from "@/components/cart/cart-provider"
+import { ProductImage } from "@/components/product/product-image"
 import { Button } from "@/components/ui/button"
 import { formatBRL, flavorsToArray } from "@/lib/format"
 import { CATEGORIES } from "@/lib/constants"
@@ -37,12 +38,10 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10">
       <Link href={`/produto/${product.slug}`} className="relative block aspect-square overflow-hidden bg-secondary">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={product.image || "/placeholder.svg"}
+        <ProductImage
+          src={product.image}
           alt={product.name}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full transition-transform duration-300 group-hover:scale-105"
         />
         {product.featured && (
           <span className="absolute left-2 top-2 rounded-md bg-neon-blue px-2 py-0.5 text-[10px] font-bold uppercase text-accent-foreground glow-blue">

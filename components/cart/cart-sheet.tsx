@@ -1,6 +1,7 @@
 "use client"
 
 import { useCart } from "@/components/cart/cart-provider"
+import { ProductImage } from "@/components/product/product-image"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { formatBRL } from "@/lib/format"
@@ -36,13 +37,7 @@ export function CartSheet() {
                 {items.map((item) => (
                   <li key={`${item.productId}-${item.flavor}`} className="flex gap-3">
                     <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.image || "/placeholder.svg"}
-                        alt={item.name}
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                      />
+                      <ProductImage src={item.image} alt={item.name} className="h-full w-full" />
                     </div>
                     <div className="flex flex-1 flex-col">
                       <p className="line-clamp-2 text-sm font-medium leading-tight">{item.name}</p>

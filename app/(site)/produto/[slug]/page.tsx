@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import { getProductBySlug, getRelatedProducts } from "@/lib/data"
 import { AddToCart } from "@/components/product/add-to-cart"
 import { ProductCard } from "@/components/product/product-card"
+import { ProductImage } from "@/components/product/product-image"
 import { formatBRL } from "@/lib/format"
 import { CATEGORIES } from "@/lib/constants"
 import { Badge } from "@/components/ui/badge"
@@ -51,12 +52,7 @@ export default async function ProductPage({
 
       <div className="grid gap-8 md:grid-cols-2">
         <div className="relative overflow-hidden rounded-2xl border border-border bg-secondary">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={product.image || "/placeholder.svg"}
-            alt={product.name}
-            className="aspect-square w-full object-cover"
-          />
+          <ProductImage src={product.image} alt={product.name} className="aspect-square w-full" />
           {product.featured && (
             <span className="absolute left-3 top-3 rounded-md bg-neon-blue px-2.5 py-1 text-xs font-bold uppercase text-accent-foreground glow-blue">
               Destaque
