@@ -20,9 +20,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { formatBRL, formatDateTime } from "@/lib/format"
 import { ORDER_STATUSES, STATUS_COLORS } from "@/lib/constants"
-import { Search, Eye, Phone, MapPin, Package } from "lucide-react"
+import { Search, Eye, Phone, MapPin, Package, MessageCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { waLink, buildOrderConfirmationMessage } from "@/lib/whatsapp"
 
 type OrderWithItems = Order & { items: OrderItem[] }
 
@@ -48,6 +49,25 @@ export function OrderManager({ orders }: { orders: OrderWithItems[] }) {
     const res = await updateOrderStatus(id, status)
     if (res.ok) toast.success("Status atualizado")
     else toast.error("Erro ao atualizar status")
+  }
+
+  function sendWhatsapp(order: OrderWithItems) {
+    const phone = order.customerPhone.replace(/\D/g, "")
+    if (!phone) {
+      toast.error("Este pedido não tem telefone válido")
+      return
+    }
+    const message = buildOrderConfirmationMessage({
+      customerName: order.customerName,
+      orderNumber: order.orderNumber,
+      total: formatBRL(order.total),
+      items: order.items.map((it) => ({
+        quantity: it.quantity,
+        productName: it.productName,
+        flavor: it.flavor,
+      })),
+    })
+    window.open(waLink(phone, message), "_blank", "noopener,noreferrer")
   }
 
   return (
@@ -87,7 +107,7 @@ export function OrderManager({ orders }: { orders: OrderWithItems[] }) {
                 <th className="hidden px-4 py-3 font-medium md:table-cell">Data</th>
                 <th className="px-4 py-3 font-medium">Total</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 text-right font-medium">Ver</th>
+                <th className="px-4 py-3 text-right font-medium">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -118,14 +138,24 @@ export function OrderManager({ orders }: { orders: OrderWithItems[] }) {
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => setSelected(o)}
-                      className="inline-flex items-center text-muted-foreground hover:text-primary"
-                      aria-label="Ver detalhes"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => sendWhatsapp(o)}
+                        className="inline-flex items-center text-muted-foreground hover:text-emerald-400"
+                        aria-label="Enviar mensagem no WhatsApp"
+                        title="Enviar mensagem no WhatsApp"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setSelected(o)}
+                        className="inline-flex items-center text-muted-foreground hover:text-primary"
+                        aria-label="Ver detalhes"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -175,6 +205,14 @@ export function OrderManager({ orders }: { orders: OrderWithItems[] }) {
                   <p className="text-muted-foreground">Pagamento: {selected.paymentMethod}</p>
                   {selected.notes && <p className="text-muted-foreground">Obs: {selected.notes}</p>}
                 </div>
+
+                <button
+                  onClick={() => sendWhatsapp(selected)}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 font-medium text-emerald-950 transition-colors hover:bg-emerald-400"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Mandar mensagem no WhatsApp
+                </button>
 
                 <ul className="space-y-2">
                   {selected.items.map((it) => (
