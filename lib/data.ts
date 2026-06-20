@@ -1,8 +1,37 @@
 import { db } from "@/lib/db"
-import { products, orders, orderItems, settings, user, type Product } from "@/lib/db/schema"
+import {
+  products,
+  orders,
+  orderItems,
+  settings,
+  user,
+  paymentLinks,
+  type Product,
+  type PaymentLink,
+  type PaymentLinkItem,
+} from "@/lib/db/schema"
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm"
 
 export type { Product }
+
+export async function getPaymentLinkByToken(
+  token: string,
+): Promise<(PaymentLink & { parsedItems: PaymentLinkItem[] }) | null> {
+  try {
+    const rows = await db.select().from(paymentLinks).where(eq(paymentLinks.token, token)).limit(1)
+    const link = rows[0]
+    if (!link) return null
+    let parsedItems: PaymentLinkItem[] = []
+    try {
+      parsedItems = JSON.parse(link.items)
+    } catch {
+      parsedItems = []
+    }
+    return { ...link, parsedItems }
+  } catch {
+    return null
+  }
+}
 
 export async function hasAdminUser(): Promise<boolean> {
   try {

@@ -17,12 +17,14 @@ import {
   LogOut,
   ExternalLink,
   Menu,
+  CreditCard,
 } from "lucide-react"
 
 const LINKS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/produtos", label: "Produtos", icon: Package },
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
+  { href: "/admin/links", label: "Links de pagamento", icon: CreditCard },
   { href: "/admin/clientes", label: "Clientes", icon: Users },
   { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ]

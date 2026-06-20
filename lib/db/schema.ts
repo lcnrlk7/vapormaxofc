@@ -105,6 +105,24 @@ export const orderItems = pgTable("order_items", {
   lineTotal: integer("lineTotal").notNull().default(0),
 })
 
+export const paymentLinks = pgTable("payment_links", {
+  id: serial("id").primaryKey(),
+  token: text("token").notNull().unique(),
+  customerName: text("customerName").notNull().default(""),
+  customerPhone: text("customerPhone").notNull().default(""),
+  location: text("location").notNull().default(""),
+  notes: text("notes").notNull().default(""),
+  // JSON: [{ productId, name, flavor, image, unitPrice, quantity }]
+  items: text("items").notNull().default("[]"),
+  subtotal: integer("subtotal").notNull().default(0),
+  deliveryFee: integer("deliveryFee").notNull().default(0),
+  total: integer("total").notNull().default(0),
+  status: text("status").notNull().default("pendente"),
+  gatewayRef: text("gatewayRef").default(""),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+})
+
 export const settings = pgTable("settings", {
   key: text("key").primaryKey(),
   value: text("value").notNull().default(""),
@@ -114,3 +132,13 @@ export const settings = pgTable("settings", {
 export type Product = typeof products.$inferSelect
 export type Order = typeof orders.$inferSelect
 export type OrderItem = typeof orderItems.$inferSelect
+export type PaymentLink = typeof paymentLinks.$inferSelect
+
+export type PaymentLinkItem = {
+  productId: number | null
+  name: string
+  flavor: string
+  image: string
+  unitPrice: number
+  quantity: number
+}
