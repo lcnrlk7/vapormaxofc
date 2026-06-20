@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import type { Product } from "@/lib/db/schema"
-import { saveProduct, deleteProduct, type ProductInput } from "@/app/actions/admin"
+import { saveProduct, deleteProduct, toggleSoldOut, type ProductInput } from "@/app/actions/admin"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select"
 import { CATEGORIES } from "@/lib/constants"
 import { formatBRL, centsToReaisInput, parseBRLToCents } from "@/lib/format"
-import { Plus, Pencil, Trash2, Search, Loader2, Star } from "lucide-react"
+import { Plus, Pencil, Trash2, Search, Loader2, Star, Ban, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -41,6 +41,7 @@ type FormState = {
   nicotine: string
   flavors: string
   stock: string
+  soldOut: boolean
   featured: boolean
   active: boolean
 }
@@ -56,6 +57,7 @@ const EMPTY: FormState = {
   nicotine: "",
   flavors: "",
   stock: "0",
+  soldOut: false,
   featured: false,
   active: true,
 }
@@ -67,6 +69,7 @@ export function ProductManager({ products }: { products: Product[] }) {
   const [form, setForm] = useState<FormState>(EMPTY)
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [togglingId, setTogglingId] = useState<number | null>(null)
 
   const filtered = products.filter((p) => {
     const matchesQuery =
@@ -95,6 +98,7 @@ export function ProductManager({ products }: { products: Product[] }) {
       nicotine: p.nicotine ?? "",
       flavors: p.flavors ?? "",
       stock: String(p.stock),
+      soldOut: p.soldOut,
       featured: p.featured,
       active: p.active,
     })
@@ -124,6 +128,7 @@ export function ProductManager({ products }: { products: Product[] }) {
       nicotine: form.nicotine,
       flavors: form.flavors,
       stock: Number.parseInt(form.stock) || 0,
+      soldOut: form.soldOut,
       featured: form.featured,
       active: form.active,
     }
@@ -135,6 +140,15 @@ export function ProductManager({ products }: { products: Product[] }) {
     }
     toast.success(form.id ? "Produto atualizado" : "Produto criado")
     setOpen(false)
+  }
+
+  async function handleToggleSoldOut(p: Product) {
+    setTogglingId(p.id)
+    const next = !p.soldOut
+    const res = await toggleSoldOut(p.id, next)
+    setTogglingId(null)
+    if (res.ok) toast.success(next ? "Marcado como esgotado" : "Disponível novamente")
+    else toast.error("Erro ao atualizar")
   }
 
   async function handleDelete(p: Product) {
@@ -215,19 +229,43 @@ export function ProductManager({ products }: { products: Product[] }) {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        p.active
-                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                          : "border-border text-muted-foreground",
+                    <div className="flex flex-wrap gap-1">
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          p.active
+                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                            : "border-border text-muted-foreground",
+                        )}
+                      >
+                        {p.active ? "Ativo" : "Inativo"}
+                      </Badge>
+                      {p.soldOut && (
+                        <Badge variant="outline" className="border-destructive/40 bg-destructive/10 text-destructive">
+                          Esgotado
+                        </Badge>
                       )}
-                    >
-                      {p.active ? "Ativo" : "Inativo"}
-                    </Badge>
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleToggleSoldOut(p)}
+                        disabled={togglingId === p.id}
+                        aria-label={p.soldOut ? "Marcar como disponível" : "Marcar como esgotado"}
+                        title={p.soldOut ? "Marcar como disponível" : "Marcar como esgotado"}
+                        className={cn(p.soldOut ? "text-emerald-400 hover:text-emerald-300" : "text-muted-foreground hover:text-destructive")}
+                      >
+                        {togglingId === p.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : p.soldOut ? (
+                          <CheckCircle2 className="h-4 w-4" />
+                        ) : (
+                          <Ban className="h-4 w-4" />
+                        )}
+                      </Button>
                       <Button variant="ghost" size="icon" onClick={() => openEdit(p)} aria-label="Editar">
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -377,6 +415,15 @@ export function ProductManager({ products }: { products: Product[] }) {
                   className="h-4 w-4 accent-[var(--primary)]"
                 />
                 Ativo (visível na loja)
+              </label>
+              <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={form.soldOut}
+                  onChange={(e) => set("soldOut", e.target.checked)}
+                  className="h-4 w-4 accent-[var(--destructive)]"
+                />
+                Esgotado
               </label>
             </div>
           </div>

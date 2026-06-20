@@ -58,6 +58,13 @@ export default async function ProductPage({
               Destaque
             </span>
           )}
+          {(product.soldOut || product.stock <= 0) && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/75 backdrop-blur-[1px]">
+              <span className="-rotate-6 rounded-lg border-2 border-destructive bg-destructive/15 px-6 py-2 text-xl font-extrabold uppercase tracking-wide text-destructive">
+                Esgotado
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col">

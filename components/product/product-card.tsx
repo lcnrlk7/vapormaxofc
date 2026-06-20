@@ -16,7 +16,7 @@ export function ProductCard({ product }: { product: Product }) {
   const router = useRouter()
   const flavors = flavorsToArray(product.flavors)
   const categoryName = CATEGORIES.find((c) => c.slug === product.category)?.name ?? product.category
-  const outOfStock = product.stock <= 0
+  const outOfStock = product.stock <= 0 || product.soldOut
 
   function handleAdd() {
     if (outOfStock) return
@@ -49,8 +49,8 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         )}
         {outOfStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/70">
-            <span className="rounded-md border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
+          <div className="absolute inset-0 flex items-center justify-center bg-background/75 backdrop-blur-[1px]">
+            <span className="-rotate-6 rounded-md border-2 border-destructive bg-destructive/15 px-4 py-1.5 text-sm font-extrabold uppercase tracking-wide text-destructive">
               Esgotado
             </span>
           </div>

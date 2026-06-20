@@ -28,6 +28,7 @@ export type ProductInput = {
   nicotine: string
   flavors: string
   stock: number
+  soldOut: boolean
   featured: boolean
   active: boolean
 }
@@ -51,6 +52,7 @@ export async function saveProduct(input: ProductInput) {
     nicotine: input.nicotine ?? "",
     flavors: input.flavors ?? "",
     stock: input.stock ?? 0,
+    soldOut: input.soldOut ?? false,
     featured: input.featured ?? false,
     active: input.active ?? true,
     updatedAt: new Date(),
@@ -62,6 +64,15 @@ export async function saveProduct(input: ProductInput) {
     await db.insert(products).values(values)
   }
 
+  revalidatePath("/admin/produtos")
+  revalidatePath("/catalogo")
+  revalidatePath("/")
+  return { ok: true as const }
+}
+
+export async function toggleSoldOut(id: number, soldOut: boolean) {
+  await requireAdmin()
+  await db.update(products).set({ soldOut, updatedAt: new Date() }).where(eq(products.id, id))
   revalidatePath("/admin/produtos")
   revalidatePath("/catalogo")
   revalidatePath("/")

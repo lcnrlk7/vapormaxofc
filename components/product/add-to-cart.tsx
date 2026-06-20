@@ -15,7 +15,7 @@ export function AddToCart({ product }: { product: Product }) {
   const isPod = product.category === "pods"
   const [flavor, setFlavor] = useState(flavors[0] ?? "")
   const [qty, setQty] = useState(1)
-  const outOfStock = product.stock <= 0
+  const outOfStock = product.stock <= 0 || product.soldOut
 
   function handleAdd() {
     if (outOfStock) return

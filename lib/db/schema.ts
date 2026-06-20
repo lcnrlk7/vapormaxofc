@@ -68,6 +68,7 @@ export const products = pgTable("products", {
   nicotine: text("nicotine").default(""),
   flavors: text("flavors").default(""),
   stock: integer("stock").notNull().default(0),
+  soldOut: boolean("soldOut").notNull().default(false),
   featured: boolean("featured").notNull().default(false),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
