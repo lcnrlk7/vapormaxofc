@@ -17,12 +17,12 @@ export function Hero({ whatsappNumber }: { whatsappNumber: string }) {
       />
       <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 py-16 text-center md:py-24">
         <Image
-          src="/logo-square.png"
+          src="/logo-vapormax.png"
           alt="Vapor Max"
-          width={180}
-          height={180}
+          width={220}
+          height={220}
           priority
-          className="h-32 w-32 animate-float-slow drop-shadow-[0_0_25px_rgba(255,45,149,0.45)] md:h-44 md:w-44"
+          className="h-40 w-40 animate-float-slow drop-shadow-[0_0_35px_rgba(255,45,149,0.5)] md:h-56 md:w-56"
         />
         <div className="space-y-4">
           <h1 className="font-heading text-4xl font-extrabold leading-tight tracking-tight text-balance md:text-6xl">

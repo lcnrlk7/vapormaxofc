@@ -61,13 +61,16 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
 
         <Link href="/" className="flex shrink-0 items-center" aria-label="Vapor Max - inicio">
           <Image
-            src="/logo-horizontal.png"
+            src="/logo-vapormax.png"
             alt="Vapor Max"
-            width={130}
+            width={52}
             height={52}
-            className="h-9 w-auto"
+            className="h-10 w-auto drop-shadow-[0_0_12px_rgba(255,45,149,0.4)]"
             priority
           />
+          <span className="ml-2 hidden font-heading text-lg font-extrabold tracking-wide sm:inline">
+            VAPOR<span className="text-neon-pink">MAX</span>
+          </span>
         </Link>
 
         <nav className="ml-2 hidden items-center gap-1 md:flex">
