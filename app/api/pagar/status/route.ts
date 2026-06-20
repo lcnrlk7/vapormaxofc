@@ -4,6 +4,7 @@ import { paymentLinks } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { getPaymentLinkByToken } from "@/lib/data"
 import { getTransaction, isPaidStatus, isGatewayConfigured } from "@/lib/promissepay"
+import { getDuttyfyStatus, isDuttyfyConfigured } from "@/lib/duttyfy"
 
 // Consulta o status do pagamento de um link e atualiza para "pago" quando aprovado.
 export async function POST(req: Request) {
@@ -15,12 +16,20 @@ export async function POST(req: Request) {
     if (!link) return NextResponse.json({ error: "Link não encontrado" }, { status: 404 })
 
     if (link.status === "pago") return NextResponse.json({ paid: true })
-    if (!isGatewayConfigured() || !link.gatewayRef) {
-      return NextResponse.json({ paid: false })
-    }
+    if (!link.gatewayRef) return NextResponse.json({ paid: false })
 
-    const tx = await getTransaction(link.gatewayRef)
-    const paid = isPaidStatus(tx.status)
+    const gateway = link.gateway || "promisepay"
+    let paid = false
+
+    if (gateway === "duttyfy") {
+      if (!isDuttyfyConfigured()) return NextResponse.json({ paid: false })
+      const status = await getDuttyfyStatus(link.gatewayRef)
+      paid = status.paid
+    } else {
+      if (!isGatewayConfigured()) return NextResponse.json({ paid: false })
+      const tx = await getTransaction(link.gatewayRef)
+      paid = isPaidStatus(tx.status)
+    }
 
     if (paid) {
       await db

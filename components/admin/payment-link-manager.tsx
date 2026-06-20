@@ -54,6 +54,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
   const [location, setLocation] = useState("")
   const [notes, setNotes] = useState("")
   const [deliveryFeeInput, setDeliveryFeeInput] = useState("")
+  const [gateway, setGateway] = useState("promisepay")
   const [saving, setSaving] = useState(false)
   const [generated, setGenerated] = useState<{ url: string; phone: string } | null>(null)
   const [copied, setCopied] = useState(false)
@@ -115,6 +116,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
       location,
       notes,
       deliveryFee,
+      gateway,
       items: items.map((i) => ({
         productId: i.productId,
         name: i.name,
@@ -315,7 +317,8 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {formatBRL(link.total)} · {formatDateTime(link.createdAt)}
+                      {formatBRL(link.total)} · {link.gateway === "duttyfy" ? "Duttyfy" : "PromissePay"} ·{" "}
+                      {formatDateTime(link.createdAt)}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-1">
@@ -381,6 +384,19 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
               <span>Total</span>
               <span className="text-primary text-glow-pink">{formatBRL(total)}</span>
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="gw">Gateway de pagamento</Label>
+            <Select value={gateway} onValueChange={setGateway}>
+              <SelectTrigger id="gw" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="promisepay">PromissePay</SelectItem>
+                <SelectItem value="duttyfy">Duttyfy</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <Button

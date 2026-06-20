@@ -4,7 +4,7 @@ import { GatewayManager } from "@/components/admin/gateway-manager"
 export const dynamic = "force-dynamic"
 
 export default async function AdminGatewaysPage() {
-  const status = await checkGatewayStatus()
+  const statuses = await checkGatewayStatus()
 
   return (
     <div className="space-y-6 p-4 md:p-8">
@@ -15,7 +15,7 @@ export default async function AdminGatewaysPage() {
         </p>
       </header>
 
-      <GatewayManager initialStatus={status} />
+      <GatewayManager initialStatuses={statuses} />
     </div>
   )
 }

@@ -27,10 +27,11 @@ export function PayButton({ token, amountLabel }: { token: string; amountLabel: 
   async function handlePay() {
     setLoading(true)
     try {
+      const utm = typeof window !== "undefined" ? window.location.search.replace(/^\?/, "") : ""
       const res = await fetch("/api/pagar/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ token, utm }),
       })
       const data = (await res.json()) as PixData & { pending?: boolean; error?: string }
 

@@ -20,6 +20,7 @@ export type PaymentLinkInput = {
   notes: string
   items: PaymentLinkItem[]
   deliveryFee: number // cents
+  gateway: string
 }
 
 function randomToken() {
@@ -39,6 +40,7 @@ export async function createPaymentLink(input: PaymentLinkInput) {
   const deliveryFee = Math.max(0, Math.round(input.deliveryFee || 0))
   const total = subtotal + deliveryFee
   const token = randomToken()
+  const gateway = input.gateway === "duttyfy" ? "duttyfy" : "promisepay"
 
   await db.insert(paymentLinks).values({
     token,
@@ -51,6 +53,7 @@ export async function createPaymentLink(input: PaymentLinkInput) {
     deliveryFee,
     total,
     status: "pendente",
+    gateway,
   })
 
   revalidatePath("/admin/links")

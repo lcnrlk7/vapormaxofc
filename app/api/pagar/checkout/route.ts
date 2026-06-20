@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server"
+import QRCode from "qrcode"
 import { db } from "@/lib/db"
 import { paymentLinks } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { getPaymentLinkByToken } from "@/lib/data"
 import { createPixCharge, isGatewayConfigured } from "@/lib/promissepay"
+import { createDuttyfyCharge, isDuttyfyConfigured } from "@/lib/duttyfy"
 
 // Cria a cobrança PIX para o link de pagamento e retorna o QR Code.
 export async function POST(req: Request) {
   try {
-    const { token } = (await req.json()) as { token?: string }
+    const { token, utm } = (await req.json()) as { token?: string; utm?: string }
     if (!token) return NextResponse.json({ error: "Token ausente" }, { status: 400 })
 
     const link = await getPaymentLinkByToken(token)
@@ -16,17 +18,49 @@ export async function POST(req: Request) {
     if (link.status === "pago") return NextResponse.json({ error: "Pedido já pago" }, { status: 409 })
     if (link.status === "cancelado") return NextResponse.json({ error: "Link cancelado" }, { status: 409 })
 
+    if (link.total < 100) {
+      return NextResponse.json({ error: "Valor mínimo de R$ 1,00 não atingido" }, { status: 400 })
+    }
+
+    const gateway = link.gateway || "promisepay"
+
+    if (gateway === "duttyfy") {
+      if (!isDuttyfyConfigured()) {
+        return NextResponse.json({ pending: true }, { status: 200 })
+      }
+      const itemTitle =
+        link.parsedItems[0]?.name && link.parsedItems.length === 1
+          ? link.parsedItems[0].name
+          : `Pedido Vapor Max (${link.parsedItems.length} itens)`
+
+      const charge = await createDuttyfyCharge({
+        amountCents: link.total,
+        title: itemTitle || "Pedido Vapor Max",
+        customerName: link.customerName,
+        customerPhone: link.customerPhone,
+        utm,
+      })
+
+      const qrCodeBase64 = await QRCode.toDataURL(charge.pixCode, { margin: 1, width: 320 })
+
+      await db
+        .update(paymentLinks)
+        .set({ gatewayRef: charge.transactionId, updatedAt: new Date() })
+        .where(eq(paymentLinks.id, link.id))
+
+      return NextResponse.json({
+        transactionId: charge.transactionId,
+        qrCodeBase64,
+        copyPaste: charge.pixCode,
+      })
+    }
+
+    // Padrão: PromissePay
     if (!isGatewayConfigured()) {
       return NextResponse.json({ pending: true }, { status: 200 })
     }
 
-    if (link.total < 50) {
-      return NextResponse.json({ error: "Valor mínimo não atingido" }, { status: 400 })
-    }
-
     const charge = await createPixCharge(link.total)
-
-    // Guarda a referência da transação para acompanhar o status depois.
     await db
       .update(paymentLinks)
       .set({ gatewayRef: charge.id, updatedAt: new Date() })
