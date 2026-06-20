@@ -40,13 +40,18 @@ export function Hero({ whatsappNumber }: { whatsappNumber: string }) {
             size="lg"
             className="bg-emerald-500 text-white hover:bg-emerald-600"
           >
-            <a href={waLink(whatsappNumber, "Ola! Quero fazer um pedido na Vapor Max.")} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="mr-2 h-5 w-5" /> Falar no WhatsApp
+            <a
+              href={waLink(whatsappNumber, "Ola! Quero fazer um pedido na Vapor Max.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center whitespace-nowrap"
+            >
+              <MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Falar no WhatsApp
             </a>
           </Button>
           <Button asChild size="lg" variant="outline" className="border-primary/50 bg-transparent hover:bg-primary/10">
-            <Link href="/catalogo">
-              Ver catalogo <ArrowRight className="ml-2 h-5 w-5" />
+            <Link href="/catalogo" className="inline-flex items-center justify-center whitespace-nowrap">
+              Ver catalogo <ArrowRight className="ml-2 h-5 w-5 shrink-0" />
             </Link>
           </Button>
         </div>
