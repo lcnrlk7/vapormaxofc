@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { waLink } from "@/lib/whatsapp"
 import { REGIONS } from "@/lib/constants"
-import { MessageCircle, Instagram, Clock, MapPin } from "lucide-react"
+import { MessageCircle, Camera, Clock, MapPin } from "lucide-react"
 
 export function SiteFooter({
   whatsappNumber,
@@ -43,7 +43,7 @@ export function SiteFooter({
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-primary"
               >
-                <Instagram className="h-4 w-4" /> Instagram
+                <Camera className="h-4 w-4" /> Instagram
               </a>
             </li>
             <li className="flex items-start gap-2">

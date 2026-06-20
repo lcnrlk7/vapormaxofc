@@ -9,9 +9,9 @@
   --font-sans: var(--font-geist-sans), 'Geist Fallback';
   --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
 
-  --color-neon-blue: var(--neon-blue);
-  --color-neon-pink: var(--neon-pink);
-  --color-neon-purple: var(--neon-purple);
+  --color-neon-blue: #00a8ff;
+  --color-neon-pink: #ff2d95;
+  --color-neon-purple: #8a2be2;
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

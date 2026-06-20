@@ -23,6 +23,17 @@ export function centsToReaisInput(cents: number): string {
   return (cents / 100).toFixed(2).replace(".", ",")
 }
 
+export function formatDateTime(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date
+  return d.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
 export function slugify(text: string): string {
   return text
     .toString()

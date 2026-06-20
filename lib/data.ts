@@ -1,8 +1,17 @@
 import { db } from "@/lib/db"
-import { products, orders, orderItems, settings, type Product } from "@/lib/db/schema"
+import { products, orders, orderItems, settings, user, type Product } from "@/lib/db/schema"
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm"
 
 export type { Product }
+
+export async function hasAdminUser(): Promise<boolean> {
+  try {
+    const rows = await db.select({ id: user.id }).from(user).limit(1)
+    return rows.length > 0
+  } catch {
+    return true
+  }
+}
 
 const DEFAULT_SETTINGS: Record<string, string> = {
   whatsapp_number: "5598000000000",
@@ -104,6 +113,17 @@ export async function getAllProductsAdmin(): Promise<Product[]> {
 
 export async function getOrders() {
   return db.select().from(orders).orderBy(desc(orders.createdAt))
+}
+
+export async function getOrdersWithItems() {
+  const [orderRows, itemRows] = await Promise.all([
+    db.select().from(orders).orderBy(desc(orders.createdAt)),
+    db.select().from(orderItems),
+  ])
+  return orderRows.map((o) => ({
+    ...o,
+    items: itemRows.filter((it) => it.orderId === o.id),
+  }))
 }
 
 export async function getOrderWithItems(id: number) {
