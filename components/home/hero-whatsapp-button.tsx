@@ -49,7 +49,7 @@ export function HeroWhatsappButton({ contacts }: { contacts: Contact[] }) {
           />
           <div
             role="menu"
-            className="absolute left-1/2 top-full z-50 mt-2 w-64 -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-card p-1.5 text-left shadow-xl"
+            className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-card p-1.5 text-left shadow-xl"
           >
             <p className="px-3 py-2 text-xs font-medium text-muted-foreground">Escolha um atendente</p>
             {valid.map((c) => (
