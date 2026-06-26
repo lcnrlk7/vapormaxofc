@@ -1,11 +1,15 @@
-import { getAllProductsAdmin } from "@/lib/data"
+import { getAllProductsAdmin, getOrdersWithItems } from "@/lib/data"
 import { listPaymentLinks } from "@/app/actions/payment-links"
 import { PaymentLinkManager } from "@/components/admin/payment-link-manager"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminLinksPage() {
-  const [products, links] = await Promise.all([getAllProductsAdmin(), listPaymentLinks()])
+  const [products, links, orders] = await Promise.all([
+    getAllProductsAdmin(),
+    listPaymentLinks(),
+    getOrdersWithItems(),
+  ])
 
   return (
     <div className="space-y-6 p-4 md:p-8">
@@ -16,7 +20,7 @@ export default async function AdminLinksPage() {
           pagamento.
         </p>
       </header>
-      <PaymentLinkManager products={products} links={links} />
+      <PaymentLinkManager products={products} links={links} orders={orders} />
     </div>
   )
 }
