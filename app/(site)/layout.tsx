@@ -19,7 +19,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         hours={settings.hours}
         groupUrl={settings.whatsapp_group_url}
       />
-      <WhatsappFab number={settings.whatsapp_number} />
+      <WhatsappFab
+        contacts={[
+          { number: settings.whatsapp_number, label: settings.whatsapp_label_1 },
+          { number: settings.whatsapp_number_2, label: settings.whatsapp_label_2 },
+        ]}
+      />
       <AgeGate />
     </div>
   )
