@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm"
 import { getPaymentLinkByToken } from "@/lib/data"
 import { getTransaction, isPaidStatus, isGatewayConfigured } from "@/lib/promissepay"
 import { getDuttyfyStatus, isDuttyfyConfigured } from "@/lib/duttyfy"
+import { getHyperionPixStatus, isHyperionConfigured } from "@/lib/hyperionpay"
 
 // Consulta o status do pagamento de um link e atualiza para "pago" quando aprovado.
 export async function POST(req: Request) {
@@ -24,6 +25,10 @@ export async function POST(req: Request) {
     if (gateway === "duttyfy") {
       if (!isDuttyfyConfigured()) return NextResponse.json({ paid: false })
       const status = await getDuttyfyStatus(link.gatewayRef)
+      paid = status.paid
+    } else if (gateway === "hyperionpay") {
+      if (!isHyperionConfigured()) return NextResponse.json({ paid: false })
+      const status = await getHyperionPixStatus({ transactionId: link.gatewayRef, externalId: link.token })
       paid = status.paid
     } else {
       if (!isGatewayConfigured()) return NextResponse.json({ paid: false })

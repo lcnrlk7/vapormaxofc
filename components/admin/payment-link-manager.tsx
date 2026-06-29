@@ -481,6 +481,7 @@ export function PaymentLinkManager({
               <SelectContent>
                 <SelectItem value="promisepay">PromissePay</SelectItem>
                 <SelectItem value="duttyfy">Duttyfy</SelectItem>
+                <SelectItem value="hyperionpay">Hyperion Pay</SelectItem>
               </SelectContent>
             </Select>
           </div>
