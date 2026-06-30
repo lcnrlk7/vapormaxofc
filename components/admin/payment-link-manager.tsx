@@ -403,8 +403,13 @@ export function PaymentLinkManager({
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {formatBRL(link.total)} · {link.gateway === "duttyfy" ? "Duttyfy" : "PromissePay"} ·{" "}
-                      {formatDateTime(link.createdAt)}
+                      {formatBRL(link.total)} ·{" "}
+                      {link.gateway === "duttyfy"
+                        ? "Duttyfy"
+                        : link.gateway === "hyperionpay"
+                          ? "Hyperion Pay"
+                          : "PromissePay"}{" "}
+                      · {formatDateTime(link.createdAt)}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-1">

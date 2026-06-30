@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { getBalance, isGatewayConfigured } from "@/lib/promissepay"
 import { isDuttyfyConfigured } from "@/lib/duttyfy"
+import { getHyperionBalance, isHyperionConfigured } from "@/lib/hyperionpay"
 
 async function requireAdmin() {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -51,5 +52,19 @@ export async function checkGatewayStatus(): Promise<GatewayStatus[]> {
     envVar: "DUTTYFY_PIX_URL_ENCRYPTED",
   }
 
-  return [promise, duttyfy]
+  // Hyperion Pay (tem endpoint de saldo)
+  const hyperionConfigured = isHyperionConfigured()
+  const hyperionBalance = hyperionConfigured ? await getHyperionBalance() : null
+  const hyperion: GatewayStatus = {
+    id: "hyperionpay",
+    name: "Hyperion Pay",
+    description: "Cobranças via PIX (QR Code e copia e cola).",
+    configured: hyperionConfigured,
+    connected: hyperionConfigured ? hyperionBalance !== null : false,
+    balanceAvailable: hyperionBalance ? hyperionBalance.balanceCents / 100 : null,
+    hasBalance: true,
+    envVar: "HYPERIONPAY_CLIENT_ID",
+  }
+
+  return [promise, duttyfy, hyperion]
 }
