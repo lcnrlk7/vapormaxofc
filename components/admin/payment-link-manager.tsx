@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import Image from "next/image"
 import { toast } from "sonner"
-import type { Product, PaymentLink } from "@/lib/db/schema"
+import type { Product, PaymentLink, Order, OrderItem } from "@/lib/db/schema"
 import { createPaymentLink, deletePaymentLink, setPaymentLinkStatus } from "@/app/actions/payment-links"
 import { formatBRL, parseBRLToCents, centsToReaisInput, formatDateTime, flavorsToArray } from "@/lib/format"
 import { Button } from "@/components/ui/button"
@@ -23,10 +23,12 @@ import {
   Link2,
   Check,
   MessageCircle,
+  ShoppingBag,
 } from "lucide-react"
 
 type DraftItem = {
-  productId: number
+  uid: string
+  productId: number | null
   name: string
   flavor: string
   image: string
@@ -34,6 +36,8 @@ type DraftItem = {
   quantity: number
   flavorsAvailable: string[]
 }
+
+type OrderWithItems = Order & { items: OrderItem[] }
 
 const STATUS_STYLES: Record<string, string> = {
   pendente: "border-amber-500/30 bg-amber-500/10 text-amber-400",
@@ -47,7 +51,15 @@ const STATUS_LABEL: Record<string, string> = {
   cancelado: "Cancelado",
 }
 
-export function PaymentLinkManager({ products, links }: { products: Product[]; links: PaymentLink[] }) {
+export function PaymentLinkManager({
+  products,
+  links,
+  orders,
+}: {
+  products: Product[]
+  links: PaymentLink[]
+  orders: OrderWithItems[]
+}) {
   const [items, setItems] = useState<DraftItem[]>([])
   const [customerName, setCustomerName] = useState("")
   const [customerPhone, setCustomerPhone] = useState("")
@@ -55,6 +67,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
   const [notes, setNotes] = useState("")
   const [deliveryFeeInput, setDeliveryFeeInput] = useState("")
   const [gateway, setGateway] = useState("promisepay")
+  const [sourceOrder, setSourceOrder] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [generated, setGenerated] = useState<{ url: string; phone: string } | null>(null)
   const [copied, setCopied] = useState(false)
@@ -75,6 +88,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
     setItems((prev) => [
       ...prev,
       {
+        uid: `p-${p.id}`,
         productId: p.id,
         name: p.name,
         flavor: flavorsAvailable[0] ?? "",
@@ -86,12 +100,39 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
     ])
   }
 
-  function updateItem(productId: number, patch: Partial<DraftItem>) {
-    setItems((prev) => prev.map((i) => (i.productId === productId ? { ...i, ...patch } : i)))
+  function loadOrder(orderId: number) {
+    const order = orders.find((o) => o.id === orderId)
+    if (!order) return
+    setCustomerName(order.customerName ?? "")
+    setCustomerPhone(order.customerPhone ?? "")
+    setLocation([order.address, order.city].filter(Boolean).join(" - "))
+    setNotes(order.notes ?? "")
+    setItems(
+      order.items.map((it) => {
+        const p = it.productId ? products.find((x) => x.id === it.productId) : undefined
+        const flavorsAvailable = p ? flavorsToArray(p.flavors) : it.flavor ? [it.flavor] : []
+        return {
+          uid: `o-${it.id}`,
+          productId: it.productId ?? null,
+          name: it.productName,
+          flavor: it.flavor ?? "",
+          image: p?.image ?? "",
+          unitPrice: it.unitPrice,
+          quantity: it.quantity,
+          flavorsAvailable,
+        }
+      }),
+    )
+    setSourceOrder(order.orderNumber)
+    toast.success(`Pedido ${order.orderNumber} carregado. Falta só o frete.`)
   }
 
-  function removeItem(productId: number) {
-    setItems((prev) => prev.filter((i) => i.productId !== productId))
+  function updateItem(uid: string, patch: Partial<DraftItem>) {
+    setItems((prev) => prev.map((i) => (i.uid === uid ? { ...i, ...patch } : i)))
+  }
+
+  function removeItem(uid: string) {
+    setItems((prev) => prev.filter((i) => i.uid !== uid))
   }
 
   function resetForm() {
@@ -101,6 +142,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
     setLocation("")
     setNotes("")
     setDeliveryFeeInput("")
+    setSourceOrder(null)
   }
 
   async function handleGenerate() {
@@ -170,6 +212,50 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
     <div className="grid gap-6 lg:grid-cols-[1fr_minmax(300px,380px)]">
       {/* Builder */}
       <div className="space-y-6">
+        <section className="space-y-4 rounded-xl border border-primary/30 bg-primary/5 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="font-heading font-semibold">Criar a partir de um pedido</h2>
+              <p className="text-xs text-muted-foreground">
+                Selecione um pedido para preencher os dados do cliente e os produtos. Depois é só informar o frete.
+              </p>
+            </div>
+            {sourceOrder && (
+              <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary">
+                Pedido {sourceOrder}
+              </Badge>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <Select value="" onValueChange={(v) => loadOrder(Number(v))}>
+                <SelectTrigger className="w-full">
+                  <ShoppingBag className="h-4 w-4" />
+                  <SelectValue placeholder="Selecionar pedido existente" />
+                </SelectTrigger>
+                <SelectContent>
+                  {orders.length === 0 ? (
+                    <SelectItem value="none" disabled>
+                      Nenhum pedido encontrado
+                    </SelectItem>
+                  ) : (
+                    orders.map((o) => (
+                      <SelectItem key={o.id} value={String(o.id)}>
+                        {o.orderNumber} — {o.customerName || "Sem nome"} ({formatBRL(o.total)})
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            {sourceOrder && (
+              <Button variant="ghost" size="sm" onClick={resetForm}>
+                Limpar
+              </Button>
+            )}
+          </div>
+        </section>
+
         <section className="space-y-4 rounded-xl border border-border bg-card p-5">
           <h2 className="font-heading font-semibold">Dados do cliente</h2>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -231,7 +317,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
             <ul className="space-y-3">
               {items.map((item) => (
                 <li
-                  key={item.productId}
+                  key={item.uid}
                   className="flex flex-col gap-3 rounded-lg border border-border bg-background p-3 sm:flex-row sm:items-center"
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -245,7 +331,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
                       <p className="text-xs text-muted-foreground">{formatBRL(item.unitPrice)} / un.</p>
                       {item.flavorsAvailable.length > 0 && (
                         <div className="mt-1 w-40">
-                          <Select value={item.flavor} onValueChange={(v) => updateItem(item.productId, { flavor: v })}>
+                          <Select value={item.flavor} onValueChange={(v) => updateItem(item.uid, { flavor: v })}>
                             <SelectTrigger size="sm" className="w-full">
                               <SelectValue placeholder="Sabor" />
                             </SelectTrigger>
@@ -266,7 +352,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
                     <div className="flex items-center rounded-lg border border-border">
                       <button
                         type="button"
-                        onClick={() => updateItem(item.productId, { quantity: Math.max(1, item.quantity - 1) })}
+                        onClick={() => updateItem(item.uid, { quantity: Math.max(1, item.quantity - 1) })}
                         className="grid h-8 w-8 place-items-center text-muted-foreground hover:text-foreground"
                         aria-label="Diminuir"
                       >
@@ -275,7 +361,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
                       <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
                       <button
                         type="button"
-                        onClick={() => updateItem(item.productId, { quantity: item.quantity + 1 })}
+                        onClick={() => updateItem(item.uid, { quantity: item.quantity + 1 })}
                         className="grid h-8 w-8 place-items-center text-muted-foreground hover:text-foreground"
                         aria-label="Aumentar"
                       >
@@ -287,7 +373,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
                     </span>
                     <button
                       type="button"
-                      onClick={() => removeItem(item.productId)}
+                      onClick={() => removeItem(item.uid)}
                       className="grid h-8 w-8 place-items-center text-muted-foreground hover:text-destructive"
                       aria-label="Remover"
                     >
@@ -317,8 +403,13 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {formatBRL(link.total)} · {link.gateway === "duttyfy" ? "Duttyfy" : "PromissePay"} ·{" "}
-                      {formatDateTime(link.createdAt)}
+                      {formatBRL(link.total)} ·{" "}
+                      {link.gateway === "duttyfy"
+                        ? "Duttyfy"
+                        : link.gateway === "hyperionpay"
+                          ? "Hyperion Pay"
+                          : "PromissePay"}{" "}
+                      · {formatDateTime(link.createdAt)}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-1">
@@ -395,6 +486,7 @@ export function PaymentLinkManager({ products, links }: { products: Product[]; l
               <SelectContent>
                 <SelectItem value="promisepay">PromissePay</SelectItem>
                 <SelectItem value="duttyfy">Duttyfy</SelectItem>
+                <SelectItem value="hyperionpay">Hyperion Pay</SelectItem>
               </SelectContent>
             </Select>
           </div>

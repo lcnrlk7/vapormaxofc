@@ -44,6 +44,9 @@ export async function hasAdminUser(): Promise<boolean> {
 
 const DEFAULT_SETTINGS: Record<string, string> = {
   whatsapp_number: "5598000000000",
+  whatsapp_number_2: "",
+  whatsapp_label_1: "Atendimento SLZ Carlos",
+  whatsapp_label_2: "Atendimento SLZ Eduardo",
   store_name: "Vapor Max",
   instagram_url: "https://instagram.com",
   delivery_fee: "500",

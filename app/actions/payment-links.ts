@@ -40,7 +40,8 @@ export async function createPaymentLink(input: PaymentLinkInput) {
   const deliveryFee = Math.max(0, Math.round(input.deliveryFee || 0))
   const total = subtotal + deliveryFee
   const token = randomToken()
-  const gateway = input.gateway === "duttyfy" ? "duttyfy" : "promisepay"
+  const allowedGateways = ["promisepay", "duttyfy", "hyperionpay"]
+  const gateway = allowedGateways.includes(input.gateway) ? input.gateway : "promisepay"
 
   await db.insert(paymentLinks).values({
     token,

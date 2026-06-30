@@ -1,10 +1,12 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { waLink } from "@/lib/whatsapp"
-import { MessageCircle, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
+import { HeroWhatsappButton } from "@/components/home/hero-whatsapp-button"
 
-export function Hero({ whatsappNumber }: { whatsappNumber: string }) {
+type Contact = { number: string; label: string }
+
+export function Hero({ contacts }: { contacts: Contact[] }) {
   return (
     <section className="relative overflow-hidden border-b border-border neon-grid">
       <div
@@ -35,19 +37,7 @@ export function Hero({ whatsappNumber }: { whatsappNumber: string }) {
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Button
-            render={
-              <a
-                href={waLink(whatsappNumber, "Ola! Quero fazer um pedido na Vapor Max.")}
-                target="_blank"
-                rel="noopener noreferrer"
-              />
-            }
-            size="lg"
-            className="bg-emerald-500 text-white hover:bg-emerald-600"
-          >
-            <MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Falar no WhatsApp
-          </Button>
+          <HeroWhatsappButton contacts={contacts} />
           <Button
             render={<Link href="/catalogo" />}
             size="lg"

@@ -17,7 +17,12 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero whatsappNumber={whatsapp} />
+      <Hero
+        contacts={[
+          { number: settings.whatsapp_number, label: settings.whatsapp_label_1 },
+          { number: settings.whatsapp_number_2, label: settings.whatsapp_label_2 },
+        ]}
+      />
       <Features />
       <CategoryGrid counts={counts} />
       <FeaturedProducts products={featured.slice(0, 8)} />

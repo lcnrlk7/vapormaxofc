@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm"
 import { getPaymentLinkByToken } from "@/lib/data"
 import { createPixCharge, isGatewayConfigured } from "@/lib/promissepay"
 import { createDuttyfyCharge, isDuttyfyConfigured } from "@/lib/duttyfy"
+import { createHyperionPix, isHyperionConfigured } from "@/lib/hyperionpay"
 
 // Cria a cobrança PIX para o link de pagamento e retorna o QR Code.
 export async function POST(req: Request) {
@@ -42,6 +43,36 @@ export async function POST(req: Request) {
       })
 
       const qrCodeBase64 = await QRCode.toDataURL(charge.pixCode, { margin: 1, width: 320 })
+
+      await db
+        .update(paymentLinks)
+        .set({ gatewayRef: charge.transactionId, updatedAt: new Date() })
+        .where(eq(paymentLinks.id, link.id))
+
+      return NextResponse.json({
+        transactionId: charge.transactionId,
+        qrCodeBase64,
+        copyPaste: charge.pixCode,
+      })
+    }
+
+    if (gateway === "hyperionpay") {
+      if (!isHyperionConfigured()) {
+        return NextResponse.json({ pending: true }, { status: 200 })
+      }
+      const itemTitle =
+        link.parsedItems[0]?.name && link.parsedItems.length === 1
+          ? link.parsedItems[0].name
+          : `Pedido Vapor Max (${link.parsedItems.length} itens)`
+
+      const charge = await createHyperionPix({
+        amountCents: link.total,
+        externalId: link.token,
+        description: itemTitle || "Pedido Vapor Max",
+        customerName: link.customerName,
+      })
+
+      const qrCodeBase64 = charge.qrCodeBase64 || (await QRCode.toDataURL(charge.pixCode, { margin: 1, width: 320 }))
 
       await db
         .update(paymentLinks)
