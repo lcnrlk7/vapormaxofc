@@ -28,14 +28,34 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
   },
-  ...(process.env.NODE_ENV === "development"
-    ? {
-        advanced: {
+  // Privacidade: não rastrear nem armazenar o IP de quem acessa o painel.
+  advanced: {
+    ipAddress: {
+      disableIpTracking: true,
+    },
+    ...(process.env.NODE_ENV === "development"
+      ? {
           defaultCookieAttributes: {
             sameSite: "none" as const,
             secure: true,
           },
+        }
+      : {}),
+  },
+  // Garante que nem IP nem user agent sejam gravados na sessão.
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (sessionData: Record<string, unknown>) => {
+          return {
+            data: {
+              ...sessionData,
+              ipAddress: "",
+              userAgent: "",
+            },
+          }
         },
-      }
-    : {}),
+      },
+    },
+  },
 })
