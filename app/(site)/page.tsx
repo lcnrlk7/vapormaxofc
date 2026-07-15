@@ -3,6 +3,7 @@ import { Features } from "@/components/home/features"
 import { CategoryGrid } from "@/components/home/category-grid"
 import { FeaturedProducts } from "@/components/home/featured-products"
 import { RegionsCta } from "@/components/home/regions-cta"
+import { NumberChangeNotice } from "@/components/home/number-change-notice"
 import { getProducts, getCategoryCounts, getSettings } from "@/lib/data"
 
 export const dynamic = "force-dynamic"
@@ -17,6 +18,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <NumberChangeNotice number={settings.whatsapp_number} />
       <Hero contacts={[{ number: settings.whatsapp_number, label: settings.whatsapp_label_1 }]} />
       <Features />
       <CategoryGrid counts={counts} />
