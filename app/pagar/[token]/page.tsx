@@ -108,7 +108,7 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
         {/* Action */}
         {!paid && !cancelled && (
           <div className="space-y-3 pt-1">
-            <PayButton token={link.token} amountLabel={formatBRL(link.total)} />
+            <PayButton body={{ token: link.token }} amountLabel={formatBRL(link.total)} />
             <Button
               render={
                 <a

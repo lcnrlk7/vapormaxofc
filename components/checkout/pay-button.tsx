@@ -11,7 +11,17 @@ type PixData = {
   copyPaste: string
 }
 
-export function PayButton({ token, amountLabel }: { token: string; amountLabel: string }) {
+export function PayButton({
+  amountLabel,
+  body,
+  checkoutUrl = "/api/pagar/checkout",
+  statusUrl = "/api/pagar/status",
+}: {
+  amountLabel: string
+  body: Record<string, unknown>
+  checkoutUrl?: string
+  statusUrl?: string
+}) {
   const [loading, setLoading] = useState(false)
   const [pix, setPix] = useState<PixData | null>(null)
   const [copied, setCopied] = useState(false)
@@ -28,10 +38,10 @@ export function PayButton({ token, amountLabel }: { token: string; amountLabel: 
     setLoading(true)
     try {
       const utm = typeof window !== "undefined" ? window.location.search.replace(/^\?/, "") : ""
-      const res = await fetch("/api/pagar/checkout", {
+      const res = await fetch(checkoutUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, utm }),
+        body: JSON.stringify({ ...body, utm }),
       })
       const data = (await res.json()) as PixData & { pending?: boolean; error?: string }
 
@@ -57,10 +67,10 @@ export function PayButton({ token, amountLabel }: { token: string; amountLabel: 
     if (pollRef.current) clearInterval(pollRef.current)
     pollRef.current = setInterval(async () => {
       try {
-        const res = await fetch("/api/pagar/status", {
+        const res = await fetch(statusUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
+          body: JSON.stringify(body),
         })
         const data = (await res.json()) as { paid?: boolean }
         if (data.paid) {

@@ -90,6 +90,8 @@ export const orders = pgTable("orders", {
   deliveryFee: integer("deliveryFee").notNull().default(0),
   total: integer("total").notNull().default(0),
   status: text("status").notNull().default("pendente"),
+  gateway: text("gateway").notNull().default(""),
+  gatewayRef: text("gatewayRef").default(""),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 })

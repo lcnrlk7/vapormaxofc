@@ -52,6 +52,7 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   delivery_fee: "500",
   hours: "Seg a Sab: 9h as 22h | Dom: 14h as 22h",
   free_delivery_min: "15000",
+  default_gateway: "promisepay",
 }
 
 export async function getSettings(): Promise<Record<string, string>> {
@@ -165,6 +166,13 @@ export async function getOrderWithItems(id: number) {
   return { ...order[0], items }
 }
 
+export async function getOrderByNumber(orderNumber: string) {
+  const order = await db.select().from(orders).where(eq(orders.orderNumber, orderNumber)).limit(1)
+  if (!order[0]) return null
+  const items = await db.select().from(orderItems).where(eq(orderItems.orderId, order[0].id))
+  return { ...order[0], items }
+}
+
 export async function getDashboardStats() {
   const [orderRows, productRows] = await Promise.all([
     db.select().from(orders),
@@ -175,7 +183,7 @@ export async function getDashboardStats() {
   const pending = orderRows.filter((o) => !["Concluido", "Cancelado"].includes(o.status)).length
   const completed = orderRows.filter((o) => o.status === "Concluido").length
   const revenue = orderRows
-    .filter((o) => o.status !== "Cancelado")
+    .filter((o) => o.status !== "Cancelado" && o.status !== "Aguardando pagamento")
     .reduce((sum, o) => sum + o.total, 0)
   const uniqueCustomers = new Set(orderRows.map((o) => o.customerPhone)).size
 

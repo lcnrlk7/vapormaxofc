@@ -24,6 +24,9 @@ export type CreateOrderInput = {
   paymentMethod: string
   deliveryFee: number
   items: CartItemInput[]
+  // "site" gera cobrança PIX na página de pagamento; "whatsapp" mantém o fluxo antigo.
+  paymentFlow?: "site" | "whatsapp"
+  gateway?: string
 }
 
 export async function createOrder(input: CreateOrderInput) {
@@ -38,6 +41,7 @@ export async function createOrder(input: CreateOrderInput) {
   const deliveryFee = input.deliveryMethod === "entrega" ? input.deliveryFee : 0
   const total = subtotal + deliveryFee
   const orderNumber = `VM${Date.now().toString().slice(-8)}`
+  const isSiteFlow = input.paymentFlow === "site"
 
   const [order] = await db
     .insert(orders)
@@ -54,7 +58,9 @@ export async function createOrder(input: CreateOrderInput) {
       subtotal,
       deliveryFee,
       total,
-      status: "Recebido",
+      // Pagamento pelo site começa aguardando o PIX; pelo WhatsApp já entra como recebido.
+      status: isSiteFlow ? "Aguardando pagamento" : "Recebido",
+      gateway: isSiteFlow ? input.gateway || "promisepay" : "",
     })
     .returning()
 

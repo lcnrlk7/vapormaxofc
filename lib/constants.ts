@@ -6,6 +6,8 @@ export const CATEGORIES = [
 ] as const
 
 export const ORDER_STATUSES = [
+  "Aguardando pagamento",
+  "Pago",
   "Recebido",
   "Em analise",
   "Preparando",
@@ -17,6 +19,8 @@ export const ORDER_STATUSES = [
 export type OrderStatus = (typeof ORDER_STATUSES)[number]
 
 export const STATUS_COLORS: Record<string, string> = {
+  "Aguardando pagamento": "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  Pago: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
   Recebido: "bg-sky-500/15 text-sky-400 border-sky-500/30",
   "Em analise": "bg-amber-500/15 text-amber-400 border-amber-500/30",
   Preparando: "bg-violet-500/15 text-violet-400 border-violet-500/30",

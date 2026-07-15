@@ -5,6 +5,13 @@ import { saveSettings } from "@/app/actions/admin"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { centsToReaisInput, parseBRLToCents } from "@/lib/format"
 import { Loader2, Save } from "lucide-react"
 import { toast } from "sonner"
@@ -18,6 +25,7 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
     hours: settings.hours ?? "",
     delivery_fee: centsToReaisInput(Number(settings.delivery_fee) || 0),
     free_delivery_min: centsToReaisInput(Number(settings.free_delivery_min) || 0),
+    default_gateway: settings.default_gateway ?? "promisepay",
   })
   const [saving, setSaving] = useState(false)
 
@@ -36,6 +44,7 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
       hours: form.hours,
       delivery_fee: String(parseBRLToCents(form.delivery_fee)),
       free_delivery_min: String(parseBRLToCents(form.free_delivery_min)),
+      default_gateway: form.default_gateway,
     })
     setSaving(false)
     if (res.ok) toast.success("Configurações salvas")
@@ -94,6 +103,27 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
           O frete é <strong className="text-foreground">a combinar pelo WhatsApp</strong>, de acordo com a localização
           do cliente. Nenhuma taxa fixa é cobrada no checkout — o valor é acertado diretamente na conversa.
         </p>
+      </section>
+
+      <section className="space-y-3 rounded-xl border border-border bg-card p-5">
+        <h2 className="font-heading font-semibold">Pagamento pelo site</h2>
+        <div className="space-y-1.5">
+          <Label htmlFor="default_gateway">Gateway usada no checkout do site</Label>
+          <Select value={form.default_gateway} onValueChange={(v) => set("default_gateway", v)}>
+            <SelectTrigger id="default_gateway" className="border-border bg-secondary">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="promisepay">PromissePay</SelectItem>
+              <SelectItem value="duttyfy">Duttyfy</SelectItem>
+              <SelectItem value="hyperionpay">Hyperion Pay</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Quando o cliente escolhe &quot;Finalizar pelo site&quot;, a cobrança PIX é gerada por esta gateway. O
+            cliente não vê o nome da gateway.
+          </p>
+        </div>
       </section>
 
       <Button type="submit" disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90">

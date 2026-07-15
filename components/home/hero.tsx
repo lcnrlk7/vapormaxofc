@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Truck } from "lucide-react"
 import { HeroWhatsappButton } from "@/components/home/hero-whatsapp-button"
 
 type Contact = { number: string; label: string }
@@ -35,6 +35,13 @@ export function Hero({ contacts }: { contacts: Contact[] }) {
             Pods descartaveis, vapes e essencias das melhores marcas. Atendimento e entrega rapida em toda a regiao
             de Sao Luis - MA.
           </p>
+          <div className="mx-auto flex max-w-xl items-center justify-center gap-2 rounded-full border border-neon-blue/30 bg-neon-blue/10 px-4 py-2 text-sm text-foreground">
+            <Truck className="h-4 w-4 shrink-0 text-neon-blue" aria-hidden />
+            <p className="text-pretty">
+              Estamos em <span className="font-semibold">Sao Luis - MA</span> e enviamos pelos Correios para baixadas
+              e interiores que tenham agencia dos Correios.
+            </p>
+          </div>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           <HeroWhatsappButton contacts={contacts} />
