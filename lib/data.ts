@@ -43,7 +43,7 @@ export async function hasAdminUser(): Promise<boolean> {
 }
 
 const DEFAULT_SETTINGS: Record<string, string> = {
-  whatsapp_number: "5598986923587",
+  whatsapp_number: "5598946923587",
   whatsapp_number_2: "",
   whatsapp_label_1: "Atendimento Vapor Max",
   whatsapp_label_2: "",

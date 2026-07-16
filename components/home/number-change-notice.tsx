@@ -2,7 +2,7 @@ import { AlertTriangle } from "lucide-react"
 import { waLink } from "@/lib/whatsapp"
 
 function formatWhatsappDisplay(raw: string) {
-  // Espera algo como 5598986923587 -> (98) 98692-3587
+  // Espera algo como 5598946923587 -> (98) 94692-3587
   const digits = raw.replace(/\D/g, "")
   const local = digits.startsWith("55") ? digits.slice(2) : digits
   if (local.length < 10) return raw
