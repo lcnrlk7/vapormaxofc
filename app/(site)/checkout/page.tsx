@@ -9,10 +9,7 @@ export default async function CheckoutPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 md:py-10">
       <h1 className="mb-6 font-heading text-2xl font-bold md:text-3xl">Finalizar pedido</h1>
-      <CheckoutForm
-        whatsappNumber={settings.whatsapp_number}
-        defaultGateway={settings.default_gateway ?? "promisepay"}
-      />
+      <CheckoutForm whatsappNumber={settings.whatsapp_number} />
     </div>
   )
 }

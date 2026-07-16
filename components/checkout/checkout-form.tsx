@@ -11,20 +11,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { formatBRL } from "@/lib/format"
 import { waLink } from "@/lib/whatsapp"
 import { cn } from "@/lib/utils"
-import { Truck, Store, ShoppingBag, Loader2, QrCode, MessageCircle } from "lucide-react"
+import { Truck, Store, ShoppingBag, Loader2, MessageCircle } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 
 export function CheckoutForm({
   whatsappNumber,
-  defaultGateway,
 }: {
   whatsappNumber: string
-  defaultGateway: string
 }) {
   const { items, subtotal, clear } = useCart()
   const router = useRouter()
-  const [loadingFlow, setLoadingFlow] = useState<"site" | "whatsapp" | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const [form, setForm] = useState({
     customerName: "",
@@ -43,7 +41,8 @@ export function CheckoutForm({
     setForm((f) => ({ ...f, [key]: value }))
   }
 
-  async function submit(flow: "site" | "whatsapp") {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
     if (!form.customerName.trim() || !form.customerPhone.trim()) {
       toast.error("Preencha nome e telefone.")
       return
@@ -54,9 +53,9 @@ export function CheckoutForm({
     }
 
     // O WhatsApp precisa abrir dentro do gesto do clique (evita bloqueio de popup).
-    const waRef = flow === "whatsapp" && typeof window !== "undefined" ? window.open("", "_blank") : null
+    const waRef = typeof window !== "undefined" ? window.open("", "_blank") : null
 
-    setLoadingFlow(flow)
+    setLoading(true)
     const res = await createOrder({
       customerName: form.customerName,
       customerPhone: form.customerPhone,
@@ -66,8 +65,6 @@ export function CheckoutForm({
       deliveryMethod: delivery,
       paymentMethod: payment,
       deliveryFee: 0,
-      paymentFlow: flow,
-      gateway: defaultGateway,
       items: items.map((i) => ({
         productId: i.productId,
         productName: i.name,
@@ -76,7 +73,7 @@ export function CheckoutForm({
         quantity: i.quantity,
       })),
     })
-    setLoadingFlow(null)
+    setLoading(false)
 
     if (!res.ok) {
       if (waRef) waRef.close()
@@ -84,14 +81,7 @@ export function CheckoutForm({
       return
     }
 
-    // Finalizar pelo site: vai para a página de pagamento PIX.
-    if (flow === "site") {
-      clear()
-      router.push(`/pagar/pedido/${res.orderNumber}`)
-      return
-    }
-
-    // Pedir pelo WhatsApp: monta a mensagem e abre a conversa.
+    // Pedido enviado pelo WhatsApp: monta a mensagem e abre a conversa.
     const lines = [
       `*Novo pedido - Vapor Max*`,
       `Pedido: *${res.orderNumber}*`,
@@ -123,11 +113,6 @@ export function CheckoutForm({
     if (waRef) waRef.location.href = url
     else window.open(url, "_blank")
     router.push(`/pedido/${res.orderNumber}`)
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    void submit("site")
   }
 
   if (items.length === 0) {
@@ -232,8 +217,7 @@ export function CheckoutForm({
             Pix
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Finalize pelo site para gerar o PIX na hora, ou envie o pedido pelo WhatsApp e receba a chave no
-            atendimento.
+            A chave Pix é enviada pelo WhatsApp após a confirmação do pedido.
           </p>
         </div>
       </div>
@@ -273,34 +257,19 @@ export function CheckoutForm({
         </div>
         <Button
           type="submit"
-          disabled={loadingFlow !== null}
+          disabled={loading}
           size="lg"
-          className="mt-5 w-full bg-primary text-primary-foreground glow-pink hover:bg-primary/90"
+          className="mt-5 w-full bg-emerald-500 text-white hover:bg-emerald-600"
         >
-          {loadingFlow === "site" ? (
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          ) : (
-            <QrCode className="mr-2 h-5 w-5 shrink-0" />
-          )}
-          Finalizar e pagar pelo site
-        </Button>
-        <Button
-          type="button"
-          onClick={() => submit("whatsapp")}
-          disabled={loadingFlow !== null}
-          size="lg"
-          variant="outline"
-          className="mt-3 w-full border-emerald-500/50 bg-transparent text-emerald-400 hover:bg-emerald-500/10"
-        >
-          {loadingFlow === "whatsapp" ? (
+          {loading ? (
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           ) : (
             <MessageCircle className="mr-2 h-5 w-5 shrink-0" />
           )}
-          Pedir pelo WhatsApp
+          Enviar pedido via WhatsApp
         </Button>
         <p className="mt-3 text-center text-xs text-muted-foreground">
-          Pagando pelo site, o QR Code PIX é gerado na próxima tela.
+          Você será redirecionado ao WhatsApp para confirmar o pedido.
         </p>
       </aside>
     </form>
