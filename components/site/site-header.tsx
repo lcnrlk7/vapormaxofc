@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useCart } from "@/components/cart/cart-provider"
 import { CartSheet } from "@/components/cart/cart-sheet"
 import { Button } from "@/components/ui/button"
@@ -26,6 +26,9 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
   const params = useSearchParams()
   const [search, setSearch] = useState(params.get("search") ?? "")
   const [menuOpen, setMenuOpen] = useState(false)
+  // O carrinho vem do localStorage; só mostramos o badge após montar para evitar mismatch de hidratação.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault()
@@ -121,7 +124,7 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
             onClick={() => setOpen(true)}
           >
             <ShoppingCart className="h-5 w-5" />
-            {count > 0 && (
+            {mounted && count > 0 && (
               <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground glow-pink">
                 {count}
               </span>
