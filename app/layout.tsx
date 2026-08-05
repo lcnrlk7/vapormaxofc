@@ -28,6 +28,11 @@ export const metadata: Metadata = {
     description: 'Catalogo premium de pods, vapes e essencias com entrega rapida.',
     type: 'website',
   },
+  verification: {
+    other: {
+      'facebook-domain-verification': 'wupazskpwuljny3y1uev31ltxydnc1',
+    },
+  },
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',
