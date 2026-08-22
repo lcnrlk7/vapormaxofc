@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site/site-footer"
 import { WhatsappFab } from "@/components/site/whatsapp-fab"
 import { AgeGate } from "@/components/site/age-gate"
 import { GroupInvitePopup } from "@/components/site/group-invite-popup"
+import { InstagramWelcome } from "@/components/site/instagram-welcome"
 import { getSettings } from "@/lib/data"
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +23,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       />
       <WhatsappFab contacts={[{ number: settings.whatsapp_number, label: settings.whatsapp_label_1 }]} />
       <AgeGate />
+      <InstagramWelcome instagramUrl={settings.instagram_url} />
       <GroupInvitePopup groupUrl={settings.whatsapp_group_url} />
     </div>
   )

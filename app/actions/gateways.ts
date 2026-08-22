@@ -52,13 +52,13 @@ export async function checkGatewayStatus(): Promise<GatewayStatus[]> {
     envVar: "DUTTYFY_PIX_URL_ENCRYPTED",
   }
 
-  // Hyperion Pay (tem endpoint de saldo)
+  // Hyperion Pay 2.0 (tem endpoint de saldo)
   const hyperionConfigured = isHyperionConfigured()
   const hyperionBalance = hyperionConfigured ? await getHyperionBalance() : null
   const hyperion: GatewayStatus = {
     id: "hyperionpay",
-    name: "Hyperion Pay",
-    description: "Cobranças via PIX (QR Code e copia e cola).",
+    name: "Hyperion Pay 2.0",
+    description: "Cobranças PIX via Nova Gateway (QR Code e copia e cola).",
     configured: hyperionConfigured,
     connected: hyperionConfigured ? hyperionBalance !== null : false,
     balanceAvailable: hyperionBalance ? hyperionBalance.balanceCents / 100 : null,

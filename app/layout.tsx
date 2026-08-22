@@ -17,9 +17,9 @@ const orbitron = Orbitron({
 })
 
 export const metadata: Metadata = {
-  title: 'Vapor Max | Pods, Vapes e Essencias com Entrega Rapida',
+  title: 'Vapor Max SLZ | Pods e Vapes com Entrega por R$ 8',
   description:
-    'Vapor Max - catalogo premium de pods descartaveis, vapes e essencias. Atendimento e entrega rapida em Sao Luis, Sao Jose de Ribamar, Raposa e Paco do Lumiar - MA.',
+    'Vapor Max em São Luís - MA. Pods descartáveis, vapes e essências originais com taxa fixa de entrega de R$ 8 nos bairros de SLZ. Instagram @vapormaxoficial.',
   generator: 'v0.app',
   manifest: '/manifest.webmanifest',
   keywords: ['vape', 'pod', 'descartavel', 'essencia', 'Vapor Max', 'Sao Luis', 'Maranhao'],

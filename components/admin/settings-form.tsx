@@ -116,7 +116,7 @@ export function SettingsForm({ settings }: { settings: Record<string, string> })
             <SelectContent>
               <SelectItem value="promisepay">PromissePay</SelectItem>
               <SelectItem value="duttyfy">Duttyfy</SelectItem>
-              <SelectItem value="hyperionpay">Hyperion Pay</SelectItem>
+              <SelectItem value="hyperionpay">Hyperion Pay 2.0</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">

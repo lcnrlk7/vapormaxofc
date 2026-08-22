@@ -47,8 +47,21 @@ export function slugify(text: string): string {
 
 export function flavorsToArray(flavors: string | null | undefined): string[] {
   if (!flavors) return []
-  return flavors
+
+  const value = flavors.trim()
+  if (value.startsWith("[")) {
+    try {
+      const parsed: unknown = JSON.parse(value)
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+      }
+    } catch {
+      // Registros antigos continuam usando o formato separado por vírgulas.
+    }
+  }
+
+  return value
     .split(",")
-    .map((f) => f.trim())
+    .map((flavor) => flavor.trim())
     .filter(Boolean)
 }

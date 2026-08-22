@@ -43,6 +43,10 @@ export async function createPaymentLink(input: PaymentLinkInput) {
   const allowedGateways = ["promisepay", "duttyfy", "hyperionpay"]
   const gateway = allowedGateways.includes(input.gateway) ? input.gateway : "promisepay"
 
+  if (gateway === "hyperionpay" && (total < 100 || total > 5_000_000)) {
+    throw new Error("Links da Hyperion Pay 2.0 devem ter valor entre R$ 1,00 e R$ 50.000,00")
+  }
+
   await db.insert(paymentLinks).values({
     token,
     customerName: input.customerName.trim(),

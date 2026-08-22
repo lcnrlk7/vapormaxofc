@@ -5,6 +5,7 @@ import { getPaymentLinkByToken, getSettings } from "@/lib/data"
 import { formatBRL } from "@/lib/format"
 import { waLink } from "@/lib/whatsapp"
 import { PayButton } from "@/components/checkout/pay-button"
+import { PaymentHelpAlert } from "@/components/checkout/payment-help-alert"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, MapPin, MessageCircle, ShoppingBag, ShieldCheck, Lock } from "lucide-react"
 
@@ -109,6 +110,7 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
         {!paid && !cancelled && (
           <div className="space-y-3 pt-1">
             <PayButton body={{ token: link.token }} amountLabel={formatBRL(link.total)} />
+            <PaymentHelpAlert whatsapp={whatsapp} reference={`o pedido de ${formatBRL(link.total)}`} />
             <Button
               render={
                 <a

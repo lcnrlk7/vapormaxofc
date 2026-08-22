@@ -24,6 +24,10 @@ export async function POST(req: Request) {
     }
 
     const gateway = order.gateway || "promisepay"
+    if (gateway === "hyperionpay" && order.total > 5_000_000) {
+      return NextResponse.json({ error: "Valor máximo da Hyperion Pay 2.0 é R$ 50.000,00" }, { status: 400 })
+    }
+
     const itemTitle =
       order.items.length === 1 && order.items[0]?.productName
         ? order.items[0].productName
