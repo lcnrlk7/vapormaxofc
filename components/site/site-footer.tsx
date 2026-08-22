@@ -26,7 +26,7 @@ export function SiteFooter({
             </span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Catalogo premium de pods, vapes e essencias com atendimento e entrega rapida em toda a regiao.
+            Pods, vapes e essências originais em São Luís — MA. Entrega com taxa fixa de R$ 8 nos bairros da cidade.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export function SiteFooter({
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-primary"
               >
-                <Camera className="h-4 w-4" /> Instagram
+                <Camera className="h-4 w-4" /> @vapormaxoficial
               </a>
             </li>
             {groupUrl ? (

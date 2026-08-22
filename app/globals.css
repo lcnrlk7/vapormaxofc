@@ -9,9 +9,9 @@
   --font-sans: var(--font-geist-sans), 'Geist Fallback';
   --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
 
-  --color-neon-blue: #00a8ff;
-  --color-neon-pink: #ff2d95;
-  --color-neon-purple: #8a2be2;
+  --color-neon-blue: #a875ff;
+  --color-neon-pink: #9d4edd;
+  --color-neon-purple: #7b2cbf;
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -55,31 +55,31 @@
 :root {
   color-scheme: dark;
 
-  --neon-blue: #00a8ff;
-  --neon-pink: #ff2d95;
-  --neon-purple: #8a2be2;
+  --neon-blue: #a875ff;
+  --neon-pink: #9d4edd;
+  --neon-purple: #7b2cbf;
 
-  --background: #0a0a0a;
-  --foreground: #fafafa;
-  --card: #151515;
-  --card-foreground: #fafafa;
-  --popover: #151515;
-  --popover-foreground: #fafafa;
-  --primary: #ff2d95;
+  --background: #09070d;
+  --foreground: #faf8ff;
+  --card: #14101b;
+  --card-foreground: #faf8ff;
+  --popover: #14101b;
+  --popover-foreground: #faf8ff;
+  --primary: #9d4edd;
   --primary-foreground: #ffffff;
-  --secondary: #1c1c22;
-  --secondary-foreground: #fafafa;
-  --muted: #1c1c22;
-  --muted-foreground: #a1a1aa;
-  --accent: #00a8ff;
-  --accent-foreground: #04121c;
+  --secondary: #21192c;
+  --secondary-foreground: #faf8ff;
+  --muted: #21192c;
+  --muted-foreground: #b6adbf;
+  --accent: #a875ff;
+  --accent-foreground: #120b1b;
   --destructive: #ef4444;
-  --border: #262630;
-  --input: #1c1c22;
-  --ring: #ff2d95;
-  --chart-1: #ff2d95;
-  --chart-2: #00a8ff;
-  --chart-3: #8a2be2;
+  --border: #33283e;
+  --input: #21192c;
+  --ring: #9d4edd;
+  --chart-1: #9d4edd;
+  --chart-2: #a875ff;
+  --chart-3: #7b2cbf;
   --chart-4: #22c55e;
   --chart-5: #f59e0b;
   --radius: 0.75rem;

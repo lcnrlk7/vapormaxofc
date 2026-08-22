@@ -8,6 +8,7 @@ import { Users, X, Bell, Package, Sparkles } from "lucide-react"
 // somente depois de confirmar a idade no age gate.
 const SESSION_KEY = "vapormax_group_invite_shown"
 const AGE_KEY = "vapormax_age_verified"
+const INSTAGRAM_KEY = "vapormax_instagram_welcome_shown"
 
 export function GroupInvitePopup({ groupUrl }: { groupUrl?: string }) {
   const [open, setOpen] = useState(false)
@@ -19,8 +20,11 @@ export function GroupInvitePopup({ groupUrl }: { groupUrl?: string }) {
     // Espera a confirmação de idade antes de exibir o convite.
     const tryShow = () => {
       if (sessionStorage.getItem(SESSION_KEY) === "true") return true
-      if (localStorage.getItem(AGE_KEY) === "true") {
-        setOpen(true)
+      if (
+        localStorage.getItem(AGE_KEY) === "true" &&
+        sessionStorage.getItem(INSTAGRAM_KEY) === "true"
+      ) {
+        window.setTimeout(() => setOpen(true), 1200)
         sessionStorage.setItem(SESSION_KEY, "true")
         return true
       }

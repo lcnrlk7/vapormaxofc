@@ -36,8 +36,11 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-xl">
+      <div className="bg-primary px-3 py-2 text-center text-xs font-bold uppercase tracking-wide text-primary-foreground sm:text-sm">
+        São Luís — MA · Entrega fixa de R$ 8 nos bairros de SLZ
+      </div>
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
         {/* Mobile menu */}
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger

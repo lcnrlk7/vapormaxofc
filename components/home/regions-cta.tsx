@@ -18,9 +18,9 @@ export function RegionsCta({ whatsappNumber, groupUrl }: { whatsappNumber: strin
         <div className="flex h-14 w-14 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-primary">
           <MapPin className="h-7 w-7" />
         </div>
-        <h2 className="font-heading text-2xl font-bold md:text-3xl text-balance">Entregamos em toda a região</h2>
+        <h2 className="font-heading text-2xl font-bold uppercase md:text-3xl text-balance">Somos de São Luís — MA</h2>
         <p className="max-w-xl text-pretty text-muted-foreground">
-          Atendemos com agilidade e discrição. Confira as regiões que cobrimos:
+          Entrega rápida com taxa fixa de <span className="font-bold text-foreground">R$ 8 para bairros de São Luís</span>. Consulte o atendimento para outras regiões:
         </p>
         <div className="flex flex-wrap justify-center gap-2">
           {REGIONS.map((r) => (

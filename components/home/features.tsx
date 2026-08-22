@@ -3,8 +3,8 @@ import { Truck, ShieldCheck, Clock, BadgePercent } from "lucide-react"
 const features = [
   {
     icon: Truck,
-    title: "Entrega Rápida",
-    desc: "Receba seu pedido com agilidade na sua região.",
+    title: "Entrega por R$ 8",
+    desc: "Taxa fixa para bairros de São Luís — MA.",
   },
   {
     icon: ShieldCheck,
