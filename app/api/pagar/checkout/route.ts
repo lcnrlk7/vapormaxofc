@@ -24,6 +24,9 @@ export async function POST(req: Request) {
     }
 
     const gateway = link.gateway || "promisepay"
+    if (gateway === "hyperionpay" && link.total > 5_000_000) {
+      return NextResponse.json({ error: "Valor máximo da Hyperion Pay 2.0 é R$ 50.000,00" }, { status: 400 })
+    }
 
     if (gateway === "duttyfy") {
       if (!isDuttyfyConfigured()) {

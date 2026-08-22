@@ -407,7 +407,7 @@ export function PaymentLinkManager({
                       {link.gateway === "duttyfy"
                         ? "Duttyfy"
                         : link.gateway === "hyperionpay"
-                          ? "Hyperion Pay"
+                          ? "Hyperion Pay 2.0"
                           : "PromissePay"}{" "}
                       · {formatDateTime(link.createdAt)}
                     </p>
@@ -486,7 +486,7 @@ export function PaymentLinkManager({
               <SelectContent>
                 <SelectItem value="promisepay">PromissePay</SelectItem>
                 <SelectItem value="duttyfy">Duttyfy</SelectItem>
-                <SelectItem value="hyperionpay">Hyperion Pay</SelectItem>
+                <SelectItem value="hyperionpay">Hyperion Pay 2.0</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -1,6 +1,8 @@
 import "server-only"
 
-const BASE_URL = "https://app.hyperionpay.com.br"
+const BASE_URL = "https://hyperionpay.com.br"
+const MIN_PIX_AMOUNT_CENTS = 100
+const MAX_PIX_AMOUNT_CENTS = 5_000_000
 
 function getAuthHeader() {
   const clientId = process.env.HYPERIONPAY_CLIENT_ID
@@ -15,8 +17,6 @@ function getAuthHeader() {
 export function isHyperionConfigured() {
   return Boolean(process.env.HYPERIONPAY_CLIENT_ID && process.env.HYPERIONPAY_CLIENT_SECRET)
 }
-
-const CPF = "61674069367"
 
 export type HyperionPixResult = {
   transactionId: string
@@ -35,6 +35,14 @@ export async function createHyperionPix(params: {
   description?: string
   customerName?: string
 }): Promise<HyperionPixResult> {
+  if (!Number.isInteger(params.amountCents)) {
+    throw new Error("O valor da cobrança deve ser informado em centavos inteiros")
+  }
+  if (params.amountCents < MIN_PIX_AMOUNT_CENTS || params.amountCents > MAX_PIX_AMOUNT_CENTS) {
+    throw new Error("A cobrança PIX deve ter valor entre R$ 1,00 e R$ 50.000,00")
+  }
+
+  const payerName = params.customerName?.trim()
   const res = await fetch(`${BASE_URL}/api/v1/integration/pix`, {
     method: "POST",
     headers: {
@@ -45,10 +53,7 @@ export async function createHyperionPix(params: {
       amount: centsToReais(params.amountCents),
       external_id: params.externalId,
       description: params.description || "Pedido Vapor Max",
-      payer: {
-        name: (params.customerName || "Cliente").trim(),
-        document: CPF,
-      },
+      ...(payerName ? { payer: { name: payerName } } : {}),
     }),
     cache: "no-store",
   })
