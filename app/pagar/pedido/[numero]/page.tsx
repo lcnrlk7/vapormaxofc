@@ -5,6 +5,7 @@ import { getOrderByNumber, getSettings } from "@/lib/data"
 import { formatBRL } from "@/lib/format"
 import { waLink } from "@/lib/whatsapp"
 import { PayButton } from "@/components/checkout/pay-button"
+import { PaymentHelpAlert } from "@/components/checkout/payment-help-alert"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, MapPin, MessageCircle, ShoppingBag, ShieldCheck, Lock } from "lucide-react"
 
@@ -123,6 +124,7 @@ export default async function OrderPayPage({ params }: { params: Promise<{ numer
               checkoutUrl="/api/pedido/checkout"
               statusUrl="/api/pedido/status"
             />
+            <PaymentHelpAlert whatsapp={whatsapp} reference={`o pedido ${order.orderNumber}`} />
             <Button
               render={
                 <a
