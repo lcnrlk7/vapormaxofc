@@ -4,14 +4,19 @@ const BASE_URL = "https://hyperionpay.com.br"
 const MIN_PIX_AMOUNT_CENTS = 100
 const MAX_PIX_AMOUNT_CENTS = 5_000_000
 
-function getAuthHeader() {
-  const clientId = process.env.HYPERIONPAY_CLIENT_ID
-  const clientSecret = process.env.HYPERIONPAY_CLIENT_SECRET
+function getAuthHeaders() {
+  const clientId = process.env.HYPERIONPAY_CLIENT_ID?.trim()
+  const clientSecret = process.env.HYPERIONPAY_CLIENT_SECRET?.trim()
   if (!clientId || !clientSecret) {
     throw new Error("HYPERIONPAY_CLIENT_ID/HYPERIONPAY_CLIENT_SECRET não configurados")
   }
-  const token = Buffer.from(`${clientId}:${clientSecret}`).toString("base64")
-  return `Basic ${token}`
+
+  // A API documenta Basic Auth, mas o gateway atualmente só reconhece
+  // de forma consistente os headers separados.
+  return {
+    "x-client-id": clientId,
+    "x-client-secret": clientSecret,
+  }
 }
 
 export function isHyperionConfigured() {
@@ -46,7 +51,7 @@ export async function createHyperionPix(params: {
   const res = await fetch(`${BASE_URL}/api/v1/integration/pix`, {
     method: "POST",
     headers: {
-      Authorization: getAuthHeader(),
+      ...getAuthHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -86,7 +91,7 @@ export async function getHyperionPixStatus(params: {
     : `external_id=${encodeURIComponent(params.externalId || "")}`
 
   const res = await fetch(`${BASE_URL}/api/v1/integration/pix?${query}`, {
-    headers: { Authorization: getAuthHeader() },
+    headers: getAuthHeaders(),
     cache: "no-store",
   })
 
@@ -103,7 +108,7 @@ export async function getHyperionPixStatus(params: {
 export async function getHyperionBalance(): Promise<{ balanceCents: number; kycStatus: string } | null> {
   try {
     const res = await fetch(`${BASE_URL}/api/v1/integration/balance`, {
-      headers: { Authorization: getAuthHeader() },
+      headers: getAuthHeaders(),
       cache: "no-store",
     })
     const json = await res.json().catch(() => ({}) as any)
