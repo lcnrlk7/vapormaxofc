@@ -15,14 +15,23 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
   trustedOrigins: [
-    "http://localhost:3000",
-    // Domínios de preview do v0 e da Vercel (wildcards)
-    "https://*.vusercontent.net",
-    "https://*.v0.dev",
-    "https://*.vercel.app",
-    ...(process.env.V0_RUNTIME_URL ? [process.env.V0_RUNTIME_URL] : []),
-    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
-    ...(process.env.VERCEL_PROJECT_PRODUCTION_URL ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`] : []),
+    ...(process.env.NODE_ENV === "development"
+      ? [
+          "http://localhost:3000",
+          ...(process.env.V0_RUNTIME_URL ? [process.env.V0_RUNTIME_URL] : []),
+          ...(process.env.V0_DEV_APP_URL ? [process.env.V0_DEV_APP_URL] : []),
+          ...(process.env.V0_BUILD_URL ? [process.env.V0_BUILD_URL] : []),
+          ...(process.env.V0_SANDBOX_URL ? [process.env.V0_SANDBOX_URL] : []),
+        ]
+      : []),
+    ...(process.env.NODE_ENV === "production"
+      ? [
+          ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+          ...(process.env.VERCEL_PROJECT_PRODUCTION_URL
+            ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`]
+            : []),
+        ]
+      : []),
   ],
   session: {
     expiresIn: 60 * 60 * 24 * 7,
