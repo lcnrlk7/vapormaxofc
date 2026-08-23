@@ -1,4 +1,5 @@
 import "server-only"
+import { createHash } from "node:crypto"
 
 const BASE_URL = "https://hyperionpay.com.br"
 const MIN_PIX_AMOUNT_CENTS = 100
@@ -34,6 +35,20 @@ function centsToReais(amountCents: number) {
   return Math.round(amountCents) / 100
 }
 
+// A implementação atual da Hyperion compara external_id com uma coluna UUID.
+// Mantemos uma referência determinística para que novas tentativas não dupliquem cobranças.
+function toHyperionExternalId(value: string) {
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)) {
+    return value
+  }
+
+  const hex = createHash("sha256").update(`vapormax:${value}`).digest("hex").slice(0, 32).split("")
+  hex[12] = "5"
+  hex[16] = ((Number.parseInt(hex[16], 16) & 0x3) | 0x8).toString(16)
+  const uuid = hex.join("")
+  return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20)}`
+}
+
 export async function createHyperionPix(params: {
   amountCents: number
   externalId: string
@@ -48,6 +63,7 @@ export async function createHyperionPix(params: {
   }
 
   const payerName = params.customerName?.trim()
+  const externalId = toHyperionExternalId(params.externalId)
   const res = await fetch(`${BASE_URL}/api/v1/integration/pix`, {
     method: "POST",
     headers: {
@@ -56,7 +72,7 @@ export async function createHyperionPix(params: {
     },
     body: JSON.stringify({
       amount: centsToReais(params.amountCents),
-      external_id: params.externalId,
+      external_id: externalId,
       description: params.description || "Pedido Vapor Max",
       ...(payerName ? { payer: { name: payerName } } : {}),
     }),
@@ -76,7 +92,7 @@ export async function createHyperionPix(params: {
   }
 
   return {
-    transactionId: String(data.transaction_id || params.externalId),
+    transactionId: String(data.transaction_id || externalId),
     pixCode,
     qrCodeBase64: pix.qr_code_base64 || "",
   }
