@@ -20,6 +20,8 @@ export type PaymentLinkInput = {
   notes: string
   items: PaymentLinkItem[]
   deliveryFee: number // cents
+  discount?: number // cents
+  totalOverride?: number | null // cents; quando definido, substitui o total calculado
   gateway: string
 }
 
@@ -47,7 +49,18 @@ export async function createPaymentLink(input: PaymentLinkInput) {
 
     const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
     const deliveryFee = Math.max(0, Math.round(input.deliveryFee || 0))
-    const total = subtotal + deliveryFee
+    const discount = Math.max(0, Math.round(input.discount || 0))
+
+    if (discount > subtotal + deliveryFee) {
+      return { ok: false as const, error: "O desconto não pode ser maior que o valor do pedido." }
+    }
+
+    // Total padrão = subtotal + entrega - desconto. Um total manual (override) tem prioridade.
+    const computedTotal = subtotal + deliveryFee - discount
+    const hasOverride =
+      typeof input.totalOverride === "number" && Number.isFinite(input.totalOverride)
+    const total = hasOverride ? Math.round(input.totalOverride as number) : computedTotal
+
     const token = randomToken()
     const allowedGateways = ["promisepay", "duttyfy", "hyperionpay"]
     const gateway = allowedGateways.includes(input.gateway) ? input.gateway : "promisepay"
@@ -72,6 +85,7 @@ export async function createPaymentLink(input: PaymentLinkInput) {
       items: JSON.stringify(items),
       subtotal,
       deliveryFee,
+      discount,
       total,
       status: "pendente",
       gateway,

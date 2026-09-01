@@ -118,6 +118,7 @@ export const paymentLinks = pgTable("payment_links", {
   items: text("items").notNull().default("[]"),
   subtotal: integer("subtotal").notNull().default(0),
   deliveryFee: integer("deliveryFee").notNull().default(0),
+  discount: integer("discount").notNull().default(0),
   total: integer("total").notNull().default(0),
   status: text("status").notNull().default("pendente"),
   gateway: text("gateway").notNull().default("promisepay"),

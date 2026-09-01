@@ -99,6 +99,12 @@ export default async function PayPage({ params }: { params: Promise<{ token: str
               <span className="text-muted-foreground">Frete</span>
               <span>{link.deliveryFee > 0 ? formatBRL(link.deliveryFee) : "A combinar"}</span>
             </div>
+            {link.discount > 0 && (
+              <div className="flex justify-between text-emerald-400">
+                <span>Desconto</span>
+                <span>- {formatBRL(link.discount)}</span>
+              </div>
+            )}
             <div className="flex justify-between border-t border-border pt-2 font-heading text-lg font-bold">
               <span>Total</span>
               <span className="text-primary text-glow-pink">{formatBRL(link.total)}</span>

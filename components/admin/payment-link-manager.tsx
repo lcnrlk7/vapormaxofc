@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
 import {
   Plus,
@@ -66,6 +67,9 @@ export function PaymentLinkManager({
   const [location, setLocation] = useState("")
   const [notes, setNotes] = useState("")
   const [deliveryFeeInput, setDeliveryFeeInput] = useState("")
+  const [discountInput, setDiscountInput] = useState("")
+  const [totalOverrideEnabled, setTotalOverrideEnabled] = useState(false)
+  const [totalOverrideInput, setTotalOverrideInput] = useState("")
   const [gateway, setGateway] = useState("promisepay")
   const [sourceOrder, setSourceOrder] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -75,7 +79,10 @@ export function PaymentLinkManager({
 
   const subtotal = useMemo(() => items.reduce((s, i) => s + i.unitPrice * i.quantity, 0), [items])
   const deliveryFee = parseBRLToCents(deliveryFeeInput)
-  const total = subtotal + deliveryFee
+  const discount = Math.min(parseBRLToCents(discountInput), subtotal + deliveryFee)
+  const computedTotal = Math.max(0, subtotal + deliveryFee - discount)
+  const totalOverride = parseBRLToCents(totalOverrideInput)
+  const total = totalOverrideEnabled ? totalOverride : computedTotal
 
   function addProduct(productId: number) {
     const p = products.find((x) => x.id === productId)
@@ -142,12 +149,19 @@ export function PaymentLinkManager({
     setLocation("")
     setNotes("")
     setDeliveryFeeInput("")
+    setDiscountInput("")
+    setTotalOverrideEnabled(false)
+    setTotalOverrideInput("")
     setSourceOrder(null)
   }
 
   async function handleGenerate() {
     if (items.length === 0) {
       toast.error("Adicione ao menos um produto.")
+      return
+    }
+    if (total <= 0) {
+      toast.error("O valor total deve ser maior que zero.")
       return
     }
     setSaving(true)
@@ -158,6 +172,8 @@ export function PaymentLinkManager({
       location,
       notes,
       deliveryFee,
+      discount,
+      totalOverride: totalOverrideEnabled ? totalOverride : null,
       gateway,
       items: items.map((i) => ({
         productId: i.productId,
@@ -471,6 +487,54 @@ export function PaymentLinkManager({
                 onChange={(e) => setDeliveryFeeInput(e.target.value)}
               />
             </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="discount">Desconto (R$)</Label>
+              <Input
+                id="discount"
+                inputMode="decimal"
+                placeholder="0,00"
+                value={discountInput}
+                onChange={(e) => setDiscountInput(e.target.value)}
+              />
+            </div>
+            {discount > 0 && (
+              <div className="flex justify-between text-emerald-400">
+                <span>Desconto aplicado</span>
+                <span>- {formatBRL(discount)}</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between border-t border-border pt-3">
+              <Label htmlFor="override" className="cursor-pointer text-muted-foreground">
+                Definir valor total manualmente
+              </Label>
+              <Switch
+                id="override"
+                checked={totalOverrideEnabled}
+                onCheckedChange={(checked) => {
+                  setTotalOverrideEnabled(checked)
+                  if (checked && !totalOverrideInput) {
+                    setTotalOverrideInput((computedTotal / 100).toFixed(2).replace(".", ","))
+                  }
+                }}
+              />
+            </div>
+            {totalOverrideEnabled ? (
+              <div className="space-y-1.5">
+                <Label htmlFor="total-override">Valor total (R$)</Label>
+                <Input
+                  id="total-override"
+                  inputMode="decimal"
+                  placeholder="0,00"
+                  value={totalOverrideInput}
+                  onChange={(e) => setTotalOverrideInput(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Calculado: {formatBRL(computedTotal)}. O valor acima será cobrado no lugar.
+                </p>
+              </div>
+            ) : null}
+
             <div className="flex justify-between border-t border-border pt-3 font-heading text-lg font-bold">
               <span>Total</span>
               <span className="text-primary text-glow-pink">{formatBRL(total)}</span>
